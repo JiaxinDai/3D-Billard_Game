@@ -11,6 +11,8 @@
 		1FB0F3E92182431A00E28001 /* all-features.png in Resources */ = {isa = PBXBuildFile; fileRef = 1FB0F3E82182431A00E28001 /* all-features.png */; };
 		6E2150BF195157C26BDF32C7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215528E67916A4BD613222 /* AppDelegate.swift */; };
 		6E2152640A74CE4EE9195509 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E2153518C54887A2C23ADFC /* Contents.json */; };
+		6E2154801A0D590453E1A45E /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215583D5A13D762D6F5611 /* History.swift */; };
+		6E21552A1218C1B19C9FF120 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215F05E3C47D015C00CF1A /* Utilities.swift */; };
 		6E2155AE0FE417339EE11996 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215AB6E529E494FEDB538C /* ViewController.swift */; };
 		6E2155F04924FCFC14F2EA05 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E2150EF79F8B4F7E1912DF2 /* Contents.json */; };
 		6E21569D81585CCD565E1841 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21558794DA5804779E84FC /* BoardView.swift */; };
@@ -65,9 +67,11 @@
 		6E2153518C54887A2C23ADFC /* Contents.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Contents.json; sourceTree = "<group>"; };
 		6E2153DA50E66236A8DDDA8C /* Piece.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Piece.swift; sourceTree = "<group>"; };
 		6E215528E67916A4BD613222 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		6E215583D5A13D762D6F5611 /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		6E21558794DA5804779E84FC /* BoardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		6E2156602E5552B6C13E85BD /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		6E215AB6E529E494FEDB538C /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		6E215F05E3C47D015C00CF1A /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +144,8 @@
 				6E215AB6E529E494FEDB538C /* ViewController.swift */,
 				6E215D732A57E77B516C0192 /* Base.lproj */,
 				6E2154457050BC00B02CEAD8 /* Assets.xcassets */,
+				6E215583D5A13D762D6F5611 /* History.swift */,
+				6E215F05E3C47D015C00CF1A /* Utilities.swift */,
 			);
 			path = "Gomoku AI";
 			sourceTree = "<group>";
@@ -427,6 +433,8 @@
 				6E21569D81585CCD565E1841 /* BoardView.swift in Sources */,
 				6E215D37E7B29BA59D649346 /* Piece.swift in Sources */,
 				6E2155AE0FE417339EE11996 /* ViewController.swift in Sources */,
+				6E2154801A0D590453E1A45E /* History.swift in Sources */,
+				6E21552A1218C1B19C9FF120 /* Utilities.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

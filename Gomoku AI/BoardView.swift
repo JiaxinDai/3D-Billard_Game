@@ -59,8 +59,8 @@ public typealias Coordinate = (col: Int, row: Int)
     var delegate: BoardViewDelegate?
 
     let boardBackground = NSImage(named: "board_dark")
-    let blackPieceImg = NSImage(named: "black_piece")
-    let whitePieceImg = NSImage(named: "white_piece")
+    let blackPieceImg = NSImage(named: "black_piece_shadowed")
+    let whitePieceImg = NSImage(named: "white_piece_shadowed")
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
@@ -71,7 +71,7 @@ public typealias Coordinate = (col: Int, row: Int)
 
 
         // Draw background wooden texture of the board
-        boardBackground?.draw(in: dirtyRect)
+//        boardBackground?.draw(in: dirtyRect)
 
         // Fill board background
         let outerRect = CGRect(origin: dirtyRect.origin, size: dirtyRect.size)
@@ -164,31 +164,4 @@ public typealias Coordinate = (col: Int, row: Int)
 
 protocol BoardViewDelegate {
     func didMouseUpOn(co: Coordinate)
-}
-
-extension CGContext {
-    static func point(at point: CGPoint, strokeWeight: CGFloat){
-        let circle = NSBezierPath(ovalIn: CGRect(center: point, size: CGSize(width: strokeWeight, height: strokeWeight)))
-        circle.fill()
-    }
-    static func fillCircle(center: CGPoint, radius: CGFloat) {
-        let circle = NSBezierPath(ovalIn: CGRect(center: center, size: CGSize(width: radius * 2, height: radius * 2)))
-        circle.fill()
-    }
-}
-
-extension CGRect {
-    init(center: CGPoint, size: CGSize){
-        self.init(
-                origin: CGPoint(
-                        x: center.x - size.width / 2,
-                        y: center.y - size.height / 2
-                ),
-                size: size
-        )
-    }
-    static func fillCircle(center: CGPoint, radius: CGFloat) {
-        let circle = NSBezierPath(ovalIn: CGRect(center: center, size: CGSize(width: radius * 2, height: radius * 2)))
-        circle.fill()
-    }
 }

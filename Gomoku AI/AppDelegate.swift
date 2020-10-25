@@ -3,7 +3,17 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
+    var board: Board {
+        return Board.sharedInstance
+    }
 
+    @IBAction func undo(_ sender: NSMenuItem) {
+        board.undo()
+    }
+
+    @IBAction func redo(_ sender: NSMenuItem) {
+        board.redo()
+    }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -14,7 +24,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - Core Data stack
-
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -43,7 +52,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }()
 
     // MARK: - Core Data Saving and Undo support
-
     @IBAction func saveAction(_ sender: AnyObject?) {
         // Performs the save action for the application, which is to send the save: message to the application's managed object context. Any encountered errors are presented to the user.
         let context = persistentContainer.viewContext

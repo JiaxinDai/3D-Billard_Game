@@ -2,7 +2,12 @@ import Foundation
 
 class Board {
     var dimension: Int
-    var pieces: [[Piece]]
+
+    // The arrangement of pieces on the board. A 2D array.
+    var pieces = [[Piece]]()
+    var delegate: BoardDelegate?
+
+    var curPlayer: Piece = .black
 
     static var sharedInstance = {
         return Board(dimension: 19)
@@ -10,6 +15,67 @@ class Board {
 
     init(dimension: Int) {
         self.dimension = dimension
+        restart()
+    }
+
+    func clear() {
         pieces = [[Piece]](repeating: Array(repeatElement(Piece.none, count: dimension)), count: dimension)
+    }
+
+    func restart() {
+        clear()
+        curPlayer = .black
+    }
+
+    func spawnPseudoPieces() {
+        clear()
+        for row in 0..<dimension {
+            for col in 0..<dimension {
+                pieces[row][col] = Piece.random()
+            }
+        }
+        delegate?.boardDidUpdate(pieces: pieces)
+    }
+
+    /**
+     Override the piece at the given coordinate with the supplied piece by force
+     */
+    func set(_ co: Coordinate, _ piece: Piece) {
+        pieces[co.row][co.col] = piece
+    }
+
+    func put(at co: Coordinate) {
+        if !isValid(co) || pieces[co.row][co.col] != .none { return }
+        pieces[co.row][co.col] = curPlayer
+        curPlayer = curPlayer.next()
+        delegate?.boardDidUpdate(pieces: pieces)
+    }
+
+    func isValid(_ co: Coordinate) -> Bool {
+        return co.col >= 0 && co.row >= 0 && co.row < dimension && co.col < 19
+    }
+}
+
+protocol BoardDelegate {
+    func boardDidUpdate(pieces: [[Piece]])
+}
+
+
+extension CGFloat {
+    static func random() -> CGFloat {
+        let dividingConst: UInt32 = 4294967295
+        return CGFloat(arc4random()) / CGFloat(dividingConst)
+    }
+
+    static func random(min: CGFloat, max: CGFloat) -> CGFloat {
+        var min = min, max = max
+        if (max < min) {swap(&min, &max)}
+        return min + random() * (max - min)
+    }
+
+    private static func swap(_ a: inout CGFloat, _ b: inout CGFloat){
+        let temp = a
+        a = b
+        b = temp
     }
 }

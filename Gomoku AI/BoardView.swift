@@ -5,10 +5,16 @@ public typealias Coordinate = (col: Int, row: Int)
 
 @IBDesignable class BoardView: NSView {
 
+    @IBInspectable var pieceScale: CGFloat = 0.95
+
     @IBInspectable var vertexColor: NSColor = NSColor.black
 
     @IBInspectable var gridLineWidth: CGFloat {
         return gap / 20
+    }
+
+    var pieceRadius: CGFloat {
+        return gap / 2 * pieceScale
     }
 
     var vertexRadius: CGFloat {
@@ -31,7 +37,7 @@ public typealias Coordinate = (col: Int, row: Int)
         return self.bounds.width / CGFloat(dimension)
     }
 
-    var dimension: Int = 19 { //since the rows and cols of the board are always going to be the same.
+    var dimension: Int = 19 {
         didSet {
             DispatchQueue.main.async {[unowned self] in
                 self.setNeedsDisplay(self.bounds)
@@ -39,35 +45,76 @@ public typealias Coordinate = (col: Int, row: Int)
         }
     }
 
+    var pieces: [[Piece]]? {
+        didSet {
+            // If the pieces passed in is nill, the dimension should remain unchanged
+            dimension = pieces?.count ?? dimension
+        }
+    }
+
     var cornerOffset: CGFloat {
         return gap / 2
     }
 
-    let boardBackground = NSImage(named: "board_light")
+    var delegate: BoardViewDelegate?
+
+    let boardBackground = NSImage(named: "board_dark")
+    let blackPieceImg = NSImage(named: "black_piece")
+    let whitePieceImg = NSImage(named: "white_piece")
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         self.wantsLayer = true
         // Drawing code here.
 
-        // Fill board background
-        let outerRect = CGRect(origin: dirtyRect.origin, size: dirtyRect.size)
-        NSColor(red: 0.839, green: 0.706, blue: 0.412, alpha: 1).setFill()
-        outerRect.fill()
+
 
 
         // Draw background wooden texture of the board
-//        boardBackground?.draw(in: dirtyRect)
+        boardBackground?.draw(in: dirtyRect)
+
+        // Fill board background
+        let outerRect = CGRect(origin: dirtyRect.origin, size: dirtyRect.size)
+        NSColor(red: 0.839, green: 0.706, blue: 0.412, alpha: 0.5).setFill()
+        outerRect.fill()
 
         // Draw board gird lines
-        NSColor.black.setStroke()
+        NSColor.black.withAlphaComponent(0.5).setStroke()
         pathForGrid().stroke()
 
         // Draw vertices
         drawVertices()
 
+        drawPieces()
 
 
+    }
+
+    override func mouseUp(with event: NSEvent) {
+        let absPos = event.locationInWindow
+        let relPos = CGPoint(x: absPos.x - frame.minX, y: absPos.y - frame.minY)
+        if relPos.x <= 0 || relPos.y <= 0 {
+            // When users drag and release out side of the board area, do nothing.
+            return
+        }
+        delegate?.didMouseUpOn(co: onBoard(relPos))
+    }
+
+    private func drawPieces() {
+        guard let pieces = self.pieces else {
+            return
+        }
+        for row in 0..<pieces.count {
+            for col in 0..<pieces[row].count {
+                let ctr = onScreen(Coordinate(col: col, row: row))
+                let rect = CGRect(center: ctr, size: CGSize(width: pieceRadius * 2, height: pieceRadius * 2))
+                switch pieces[row][col] {
+                case .black: blackPieceImg?.draw(in: rect)
+                case .white: whitePieceImg?.draw(in: rect)
+                case .none: break
+                }
+            }
+        }
     }
 
     private func pathForGrid() -> NSBezierPath {
@@ -94,13 +141,29 @@ public typealias Coordinate = (col: Int, row: Int)
         }
     }
 
-
+    /**
+     Convert a coordinate to position on screen
+     */
     private func onScreen(_ coordinate: Coordinate) -> CGPoint {
         return CGPoint(
                 x: cornerOffset + CGFloat(coordinate.col) * gap,
-                y: cornerOffset + CGFloat(coordinate.row) * gap
+                y: bounds.height - (cornerOffset + CGFloat(coordinate.row) * gap)
         )
     }
+
+    /**
+     Convert a position on screen to coordinate
+     */
+    public func onBoard(_ onScreen: CGPoint) -> Coordinate {
+        func convert(_ n: CGFloat) -> Int {
+            return Int((n - cornerOffset) / gap + 0.5)
+        }
+        return (convert(onScreen.x), dimension - convert(onScreen.y) - 1)
+    }
+}
+
+protocol BoardViewDelegate {
+    func didMouseUpOn(co: Coordinate)
 }
 
 extension CGContext {

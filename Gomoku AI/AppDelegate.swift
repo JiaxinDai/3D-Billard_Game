@@ -7,6 +7,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return Board.sharedInstance
     }
 
+    @IBAction func restart(_ sender: NSMenuItem) {
+        board.restart()
+    }
+
     @IBAction func undo(_ sender: NSMenuItem) {
         board.undo()
     }
@@ -24,6 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - Core Data stack
+
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -31,7 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
          application to it. This property is optional since there are legitimate
          error conditions that could cause the creation of the store to fail.
         */
-        let container = NSPersistentContainer(name: "Gomoku_AI")
+        let container = NSPersistentContainer(name: "Gomoku_Zero")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error {
                 // Replace this implementation with code to handle the error appropriately.
@@ -52,6 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }()
 
     // MARK: - Core Data Saving and Undo support
+
     @IBAction func saveAction(_ sender: AnyObject?) {
         // Performs the save action for the application, which is to send the save: message to the application's managed object context. Any encountered errors are presented to the user.
         let context = persistentContainer.viewContext

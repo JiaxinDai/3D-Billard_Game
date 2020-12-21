@@ -4,6 +4,7 @@ class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
 
 
     @IBOutlet weak var boardView: BoardView!
+    @IBOutlet weak var boardTextureView: BoardTextureView!
 
     func didMouseUpOn(co: Coordinate) {
         // Transfer the interpreted UI action to model
@@ -28,7 +29,10 @@ class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
 
         // Establish delegation with board view (View)
         boardView.delegate = self
+    }
 
+    override func mouseUp(with event: NSEvent) {
+        print(event)
     }
 
     override var representedObject: Any? {

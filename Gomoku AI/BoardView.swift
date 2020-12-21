@@ -9,7 +9,7 @@ public typealias Coordinate = (col: Int, row: Int)
 
     @IBInspectable var vertexColor: NSColor = NSColor.black
 
-    @IBInspectable var gridLineWidth: CGFloat {
+    var gridLineWidth: CGFloat {
         return gap / 20
     }
 
@@ -122,15 +122,17 @@ public typealias Coordinate = (col: Int, row: Int)
 
     override func mouseEntered(with event: NSEvent) {
         mouseInScope = true
-        if let co = pendingPieceCo, shouldDrawPendingPiece {
-            setNeedsDisplay(rect(at: co)) // Optimization
-        }
+        redrawPendingCo()
     }
 
     override func mouseExited(with event: NSEvent) {
         mouseInScope = false
+        redrawPendingCo()
+    }
+
+    private func redrawPendingCo() {
         if let co = pendingPieceCo, shouldDrawPendingPiece {
-            setNeedsDisplay(rect(at: co)) // Optimization
+            setNeedsDisplay(rect(at: co))
         }
     }
 
@@ -159,17 +161,18 @@ public typealias Coordinate = (col: Int, row: Int)
         for trackingArea in self.trackingAreas {
             self.removeTrackingArea(trackingArea)
         }
-
         let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .mouseMoved]
         let trackingArea = NSTrackingArea(rect: self.bounds, options: options, owner: self, userInfo: nil)
         self.addTrackingArea(trackingArea)
     }
+
 
     /**
      Draw a half transparent piece at the coordinate that the mouse is hovering over
      */
     func drawPendingPiece() {
         if let co = pendingPieceCo, mouseInScope {
+            if !board.isValid(co) { return }
             if pieces == nil || pieces![co.row][co.col] == .none { // If the coordinate is not occupied
                 let rect = self.rect(at: co)
                 if board.curPlayer == .black {

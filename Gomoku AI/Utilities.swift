@@ -47,3 +47,9 @@ extension CGRect {
         circle.fill()
     }
 }
+
+extension NSObject {
+    internal func observe(_ name: Notification.Name, _ selector: Selector) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: name, object: nil)
+    }
+}

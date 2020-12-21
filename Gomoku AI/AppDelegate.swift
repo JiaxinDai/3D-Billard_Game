@@ -7,6 +7,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return Board.sharedInstance
     }
 
+    var controller: ViewController! {
+        return NSApplication.shared.mainWindow?.windowController?.contentViewController as? ViewController
+    }
+
+    @IBOutlet weak var boardTextureMenuItem: NSMenuItem!
+
     @IBAction func restart(_ sender: NSMenuItem) {
         board.restart()
     }
@@ -19,8 +25,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         board.redo()
     }
 
+    @IBAction func save(_ sender: NSMenuItem) {
+        post(saveNotif)
+    }
+
+    @IBAction func boardTexture(_ sender: NSMenuItem) {
+        let bool = controller.boardTextureView.isHidden
+        controller.boardTextureView.isHidden = !bool
+        boardTextureMenuItem.title = bool ? "Hide Board Texture" : "Show Board Texture"
+    }
+
+
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
+        boardTextureMenuItem.title = controller.boardTextureView.isHidden ? "Show Board Texture" : "Hide Board Texture"
+//        let myWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "board-window") as! NSWindowController
+//        myWindowController.showWindow(self)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -28,7 +48,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - Core Data stack
-
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -36,7 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
          application to it. This property is optional since there are legitimate
          error conditions that could cause the creation of the store to fail.
         */
-        let container = NSPersistentContainer(name: "Gomoku_Zero")
+        let container = NSPersistentContainer(name: "Gomoku_AI")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error {
                 // Replace this implementation with code to handle the error appropriately.
@@ -57,7 +76,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }()
 
     // MARK: - Core Data Saving and Undo support
-
     @IBAction func saveAction(_ sender: AnyObject?) {
         // Performs the save action for the application, which is to send the save: message to the application's managed object context. Any encountered errors are presented to the user.
         let context = persistentContainer.viewContext

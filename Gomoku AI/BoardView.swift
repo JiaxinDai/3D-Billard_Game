@@ -35,11 +35,6 @@ public typealias Coordinate = (col: Int, row: Int)
         return self.bounds.width - cornerOffset * 2
     }
 
-    var board: Board {
-        return Board.sharedInstance
-    }
-
-
     var gap: CGFloat {
         return self.bounds.width / CGFloat(dimension)
     }
@@ -59,6 +54,10 @@ public typealias Coordinate = (col: Int, row: Int)
         }
     }
 
+    var board: Board {
+        return delegate!.board
+    }
+
     var cornerOffset: CGFloat {
         return gap / 2
     }
@@ -72,7 +71,6 @@ public typealias Coordinate = (col: Int, row: Int)
 
     var delegate: BoardViewDelegate?
 
-    let boardBackground = NSImage(named: "board_dark")
     let blackPieceImg = NSImage(named: "black_piece_shadowed")
     let whitePieceImg = NSImage(named: "white_piece_shadowed")
     let blackWithAlpha = NSImage(named: "black_piece_alpha")
@@ -81,10 +79,6 @@ public typealias Coordinate = (col: Int, row: Int)
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         self.wantsLayer = true
-
-        // Draw background wooden texture of the board
-//        boardBackground?.draw(in: dirtyRect)
-
 
         // Fill board background
         let outerRect = CGRect(origin: dirtyRect.origin, size: dirtyRect.size)
@@ -268,5 +262,6 @@ public typealias Coordinate = (col: Int, row: Int)
 }
 
 protocol BoardViewDelegate {
+    var board: Board {get}
     func didMouseUpOn(co: Coordinate)
 }

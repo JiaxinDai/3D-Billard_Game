@@ -10,10 +10,6 @@ class Board {
 
     var curPlayer: Piece = .black
 
-    static var sharedInstance = {
-        return Board(dimension: 19)
-    }()
-
     init(dimension: Int) {
         self.dimension = dimension
         restart()

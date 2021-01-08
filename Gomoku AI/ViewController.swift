@@ -16,14 +16,12 @@ class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
         boardView.pieces = pieces
     }
 
-
-    var board: Board {
-        return Board.sharedInstance
-    }
+    var delegate: ViewControllerDelegate?
+    var board: Board = Board(dimension: 19)
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        print()
         // Establish delegation with board (Model)
         board.delegate = self
 
@@ -43,4 +41,8 @@ class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
 
 
 
+}
+
+protocol ViewControllerDelegate {
+    var board: Board {get}
 }

@@ -60,7 +60,6 @@
 		1F60C3682168232D00580C99 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1F60C36D2168232E00580C99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		1F60C3A021690EFD00580C99 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
-		1F60C3AB21694C7100580C99 /* Gomoku AI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Gomoku AI.entitlements"; sourceTree = "<group>"; };
 		1F7E4CBE21AB2D2F002AE461 /* Gomoku AI iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Gomoku AI iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1FB0F3E82182431A00E28001 /* all-features.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "all-features.png"; sourceTree = "<group>"; };
 		1FE1AE2521BC2958008E46AE /* Gomoku AI Model */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Gomoku AI Model"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -161,7 +160,6 @@
 			children = (
 				1FB0F3E7218242D000E28001 /* Screenshots */,
 				1F60C36D2168232E00580C99 /* Info.plist */,
-				1F60C3AB21694C7100580C99 /* Gomoku AI.entitlements */,
 				1F60C3652168232C00580C99 /* Gomoku_AI.xcdatamodeld */,
 				1F60C3682168232D00580C99 /* Assets.xcassets */,
 			);

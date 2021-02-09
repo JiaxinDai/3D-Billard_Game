@@ -24,6 +24,7 @@ class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
         print()
         // Establish delegation with board (Model)
         board.delegate = self
+        board.zeroPlus.visDelegate = self // Set this to nil to disable visualization
 
         // Establish delegation with board view (View)
         boardView.delegate = self
@@ -39,10 +40,16 @@ class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
         }
     }
 
-
-
 }
 
 protocol ViewControllerDelegate {
     var board: Board {get}
+}
+
+extension ViewController: ZeroPlusVisualizationDelegate {
+    func activeMapUpdated(activeMap: [[Bool]]?) {
+        DispatchQueue.main.async {
+            self.boardView.activeMap = activeMap
+        }
+    }
 }

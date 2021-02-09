@@ -1,5 +1,8 @@
 import Foundation
 
+/**
+     Point evaluation
+ */
 class Evaluator {
 
     func evaluate(for player: Piece, at co: Coordinate, pieces: [[Piece]]) -> Int {

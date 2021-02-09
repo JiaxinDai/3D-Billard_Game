@@ -20,6 +20,7 @@
 		6E2155F04924FCFC14F2EA05 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = 6E2150EF79F8B4F7E1912DF2 /* Contents.json */; };
 		6E21567A626D5E025C64D399 /* ThreatType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215D15D2139E460B85FFB8 /* ThreatType.swift */; };
 		6E21569D81585CCD565E1841 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21558794DA5804779E84FC /* BoardView.swift */; };
+		6E215784954B5E239089E5EB /* HeuristicEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215964E1340190F4F703F8 /* HeuristicEvaluator.swift */; };
 		6E215B7994268DDE5C3FC6FD /* Evaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215B0DFD4178FD4C4ABA19 /* Evaluator.swift */; };
 		6E215C192FC7A1432A12237C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E2152D67732D8BF4BD4F7D6 /* Main.storyboard */; };
 		6E215C2F1AC8D4EE766F1060 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2156602E5552B6C13E85BD /* Board.swift */; };
@@ -77,6 +78,7 @@
 		6E215583D5A13D762D6F5611 /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		6E21558794DA5804779E84FC /* BoardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 		6E2156602E5552B6C13E85BD /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		6E215964E1340190F4F703F8 /* HeuristicEvaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeuristicEvaluator.swift; sourceTree = "<group>"; };
 		6E215AB6E529E494FEDB538C /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		6E215B0DFD4178FD4C4ABA19 /* Evaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Evaluator.swift; sourceTree = "<group>"; };
 		6E215D15D2139E460B85FFB8 /* ThreatType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreatType.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 				6E215B0DFD4178FD4C4ABA19 /* Evaluator.swift */,
 				6E215D15D2139E460B85FFB8 /* ThreatType.swift */,
 				6E2154EF24FA4691DF6CD7EC /* ZeroPlus.swift */,
+				6E215964E1340190F4F703F8 /* HeuristicEvaluator.swift */,
 			);
 			path = "Gomoku AI";
 			sourceTree = "<group>";
@@ -453,6 +456,7 @@
 				6E215B7994268DDE5C3FC6FD /* Evaluator.swift in Sources */,
 				6E21567A626D5E025C64D399 /* ThreatType.swift in Sources */,
 				6E2154C88E31515FBEFA67CC /* ZeroPlus.swift in Sources */,
+				6E215784954B5E239089E5EB /* HeuristicEvaluator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

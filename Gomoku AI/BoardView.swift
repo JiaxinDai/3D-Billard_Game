@@ -7,7 +7,8 @@ public typealias Coordinate = (col: Int, row: Int)
 
     @IBInspectable var pieceScale: CGFloat = 0.95
 
-    @IBInspectable var vertexColor: NSColor = NSColor.black
+    @IBInspectable var vertexColor: NSColor = .black
+    @IBInspectable var zeroPlusThemeColor: NSColor = .yellow
 
     var gridLineWidth: CGFloat {
         return gap / 20
@@ -72,8 +73,8 @@ public typealias Coordinate = (col: Int, row: Int)
 
     var pendingPieceCo: Coordinate?
     var shouldDrawPendingPiece = true
-    func rect(at: Coordinate) -> CGRect {
-        return CGRect(center: onScreen(pendingPieceCo!),
+    func rect(at co: Coordinate) -> CGRect {
+        return CGRect(center: onScreen(co),
                 size: CGSize(width: pieceRadius * 2, height: pieceRadius * 2))
     }
 
@@ -84,6 +85,16 @@ public typealias Coordinate = (col: Int, row: Int)
         }
     }
     var zeroPlusHistory: History? {
+        didSet {
+            zeroPlusHistory?.stack.forEach{setNeedsDisplay(rect(at: $0))}
+            zeroPlusHistory?.reverted.forEach{setNeedsDisplay(rect(at: $0))}
+        }
+    }
+
+    var activeMapVisible = true
+    var zeroPlusVisualization = true
+    var zeroPlusHistoryVisible = true
+    var overlayStepNumber = false {
         didSet {
             setNeedsDisplay(bounds)
         }
@@ -115,9 +126,40 @@ public typealias Coordinate = (col: Int, row: Int)
 
         drawPendingPiece()
 
-        drawActiveMap()
+        if zeroPlusVisualization {
+            if activeMapVisible {
+                drawActiveMap()
+            }
+            if zeroPlusHistoryVisible {
+                drawZeroPlusHistory()
+            }
+        }
 
-        drawZeroPlusHistory()
+        if overlayStepNumber {
+            drawStepNumberOverlay()
+        }
+    }
+
+    func drawStepNumberOverlay() {
+        var color: Piece = .black
+        for (num, co) in board.history.stack.enumerated() {
+            drawStepNumberOverlay(num: num + 1, for: color, at: co, isMostRecent: num == board.history.stack.count - 1)
+            color = color.next()
+        }
+    }
+
+    private func drawStepNumberOverlay(num: Int, for piece: Piece, at co: Coordinate, isMostRecent: Bool) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        let attributes = [
+            NSAttributedString.Key.paragraphStyle  : paragraphStyle,
+            .font            : NSFont.systemFont(ofSize: pieceRadius),
+            .foregroundColor : piece == .black ? isMostRecent ? NSColor.green : NSColor.white : isMostRecent ? .red : .black,
+        ]
+
+        let textRect = CGRect(center: onScreen(co), size: CGSize(width: 50, height: pieceRadius))
+        let attrString = NSAttributedString(string: "\(num)", attributes: attributes)
+        attrString.draw(in: textRect)
     }
 
     func drawZeroPlusHistory() {
@@ -147,9 +189,10 @@ public typealias Coordinate = (col: Int, row: Int)
                 let ctr = onScreen(Coordinate(col: col, row: row))
                 let rect = CGRect(center: ctr, size: CGSize(width: pieceRadius / 2, height: pieceRadius / 2))
                 if map[row][col] {
-                    NSColor.green.withAlphaComponent(0.7).setStroke()
-                    let path = NSBezierPath(ovalIn: rect)
-                    path.lineWidth = 1
+                    let color: NSColor = board.curPlayer == .black ? .green : .yellow
+                    color.withAlphaComponent(0.8).setStroke()
+                    let path = NSBezierPath(rect: rect)
+                    path.lineWidth = gridLineWidth
                     path.stroke()
                 }
             }

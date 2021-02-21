@@ -19,8 +19,10 @@ class ZeroPlus: HeuristicEvaluatorDelegate {
     var betaCut = 0
     var cumCutDepth = 0
 
-    var personality: Personality = .gameTheory
+    var personality: Personality = .search(depth: 7, breadth: 3)
     var activeMapDiffStack = [[Coordinate]]()
+
+    var startTime: TimeInterval = 0
 
     /**
      Generate a map that indicates the active coordinates
@@ -79,6 +81,7 @@ class ZeroPlus: HeuristicEvaluatorDelegate {
     }
 
     func getMove(for player: Piece) {
+        startTime = Date().timeIntervalSince1970
         heuristicEvaluator.delegate = self
         pieces = delegate.pieces // Update and store the arrangement of pieces from the delegate
         genActiveCoMap() // Generate a map containing active coordinates
@@ -101,6 +104,10 @@ class ZeroPlus: HeuristicEvaluatorDelegate {
             case .basic:
                 let offensiveMoves = genSortedMoves(for: player)
                 let defensiveMoves = genSortedMoves(for: player.next())
+                if offensiveMoves.count == 0 && defensiveMoves.count == 0 {
+                    // If ZeroPlus is out of moves...
+                    return
+                }
                 let offensiveMove = offensiveMoves[0]
                 let defensiveMove = defensiveMoves[0]
                 if offensiveMove.score >= ThreatType.terminalMax {
@@ -110,15 +117,17 @@ class ZeroPlus: HeuristicEvaluatorDelegate {
                 } else {
                     move = offensiveMove.score > defensiveMove.score ? offensiveMove : defensiveMove
                 }
-            case .gameTheory:
-                move = minimax(depth: 5, breadth: 4, player: identity, alpha: Int.min, beta: Int.max)
+            case .search(depth: let d, breadth: let b):
+                move = minimax(depth: d, breadth: b, player: identity, alpha: Int.min, beta: Int.max)
             }
 
             delegate.bestMoveExtrapolated(co: move!.co)
         }
         let avgCutDepth = Double(cumCutDepth) / Double(alphaCut + betaCut)
         print("alpha cut: \(alphaCut)\t beta cut: \(betaCut)\t avg. cut depth: \(avgCutDepth))")
-        print("recognized sequences: \(Evaluator.hashMap.count)")
+        print("recognized sequences: \(Evaluator.seqHashMap.count)")
+        print("recognized sequence groups: \(Evaluator.seqGroupHashMap.count)")
+        print("calc. duration (s): \(Date().timeIntervalSince1970 - startTime)")
 
         visDelegate?.activeMapUpdated(activeMap: nil) // Erase drawings of active map
     }
@@ -246,7 +255,7 @@ class ZeroPlus: HeuristicEvaluatorDelegate {
 }
 
 enum Personality {
-    case basic, gameTheory
+    case basic, search(depth: Int, breadth: Int)
 }
 
 protocol ZeroPlusDelegate {

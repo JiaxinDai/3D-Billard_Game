@@ -1,6 +1,6 @@
 import Foundation
 
-let saveNotif = Notification.Name("save-notif")
+let visPrefNotif = Notification.Name("vis-pref")
 
 func post(_ notif: Notification.Name, _ object: Any?) {
     NotificationCenter.default.post(name: notif, object: object)

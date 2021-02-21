@@ -1,4 +1,4 @@
-import Cocoa
+mport Cocoa
 
 class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
 
@@ -50,6 +50,12 @@ extension ViewController: ZeroPlusVisualizationDelegate {
     func activeMapUpdated(activeMap: [[Bool]]?) {
         DispatchQueue.main.async {
             self.boardView.activeMap = activeMap
+        }
+    }
+
+    func historyDidUpdate(history: History?) {
+        DispatchQueue.main.async {
+            self.boardView.zeroPlusHistory = history
         }
     }
 }

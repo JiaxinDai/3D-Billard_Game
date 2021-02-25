@@ -1,7 +1,6 @@
-mport Cocoa
+import Cocoa
 
-class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
-
+class ViewController: NSViewController, BoardViewDelegate {
 
     @IBOutlet weak var boardView: BoardView!
     @IBOutlet weak var boardTextureView: BoardTextureView!
@@ -11,23 +10,38 @@ class ViewController: NSViewController, BoardDelegate, BoardViewDelegate {
         board.put(at: co)
     }
 
-    func boardDidUpdate(pieces: [[Piece]]) {
-        // Transfer the current arrangement of pieces to board view for display
-        boardView.pieces = pieces
-    }
+
+
+
 
     var delegate: ViewControllerDelegate?
     var board: Board = Board(dimension: 19)
+    var zeroPlus: ZeroPlus {
+        return board.zeroPlus
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         print()
         // Establish delegation with board (Model)
         board.delegate = self
-        board.zeroPlus.visDelegate = self // Set this to nil to disable visualization
+        zeroPlus.visDelegate = self // Set this to nil to disable visualization
 
         // Establish delegation with board view (View)
         boardView.delegate = self
+
+    }
+
+    func updateVisPref(_ name: String) {
+        switch name {
+        case "Toggle Animation":
+            let state = boardView.zeroPlusVisualization
+            boardView.zeroPlusVisualization = !state
+            zeroPlus.visDelegate = state ? nil : self
+        case "Toggle Active Map": boardView.activeMapVisible = !boardView.activeMapVisible
+        case "Toggle History Stack": boardView.zeroPlusHistoryVisible  = !boardView.zeroPlusHistoryVisible
+        default: break
+        }
     }
 
     override func mouseUp(with event: NSEvent) {
@@ -46,6 +60,22 @@ protocol ViewControllerDelegate {
     var board: Board {get}
 }
 
+extension ViewController: BoardDelegate {
+    func gameHasEnded(winner: Piece, coordinates: [Coordinate]) {
+        DispatchQueue.main.async {
+            self.boardView.winningCoordinates = coordinates
+            let msg = winner == .black ? "Black wins!" : "White wins!"
+            let _  = dialogue(msg: msg, infoTxt: "Hit Shift + Command + R (⇧⌘R) to restart the game.")
+        }
+    }
+
+    func boardDidUpdate(pieces: [[Piece]]) {
+        // Transfer the current arrangement of pieces to board view for display
+        boardView.pieces = pieces
+    }
+
+}
+
 extension ViewController: ZeroPlusVisualizationDelegate {
     func activeMapUpdated(activeMap: [[Bool]]?) {
         DispatchQueue.main.async {
@@ -57,5 +87,9 @@ extension ViewController: ZeroPlusVisualizationDelegate {
         DispatchQueue.main.async {
             self.boardView.zeroPlusHistory = history
         }
+    }
+
+    func zeroPlus(isThinking: Bool) {
+        boardView.userInteractionDisabled = isThinking
     }
 }

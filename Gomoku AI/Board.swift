@@ -19,6 +19,7 @@ class Board: ZeroPlusDelegate, HeuristicEvaluatorDelegate {
     var zeroAi: Piece = .none
     var zeroPlus = ZeroPlus()
     var zeroXzero = false // When this is set to true, zero will play against itself!
+    var zeroIsThinking = false
     var gameHasEnded = false
     let zeroActivityQueue = DispatchQueue(label: "zeroPlus", attributes: .concurrent)
 
@@ -35,6 +36,7 @@ class Board: ZeroPlusDelegate, HeuristicEvaluatorDelegate {
     }
 
     func restart() {
+        if zeroIsThinking {return}
         clear()
         curPlayer = .black
         history = History()
@@ -57,6 +59,7 @@ class Board: ZeroPlusDelegate, HeuristicEvaluatorDelegate {
      Redo last move
      */
     func redo() {
+        if zeroIsThinking {return}
         if let co = history.restore() {
             set(co, curPlayer)
             curPlayer = curPlayer.next()
@@ -68,6 +71,7 @@ class Board: ZeroPlusDelegate, HeuristicEvaluatorDelegate {
      Undo last move
      */
     func undo() {
+        if zeroIsThinking {return}
         if let co = history.revert() {
             set(co, .none)
             gameHasEnded = false
@@ -84,7 +88,10 @@ class Board: ZeroPlusDelegate, HeuristicEvaluatorDelegate {
     }
 
     func put(at co: Coordinate) {
-        if !isValid(co) || pieces[co.row][co.col] != .none || gameHasEnded {
+        if zeroIsThinking || gameHasEnded {
+            return
+        }
+        if !isValid(co) || pieces[co.row][co.col] != .none  {
             return
         }
         set(co, curPlayer)
@@ -186,6 +193,7 @@ class Board: ZeroPlusDelegate, HeuristicEvaluatorDelegate {
      */
     func triggerZeroBrainstorm() {
         if gameHasEnded {return}
+        zeroIsThinking = true
         zeroActivityQueue.async {[unowned self] in
             self.zeroPlus.getMove(for: self.curPlayer)
         }
@@ -195,6 +203,7 @@ class Board: ZeroPlusDelegate, HeuristicEvaluatorDelegate {
      ZeroPlus has returned the extrapolated best move
      */
     func bestMoveExtrapolated(co: Coordinate) {
+        zeroIsThinking = false
         put(at: co)
     }
 

@@ -75,7 +75,9 @@ class Evaluator {
                 return newScore - oldScore
             }
             let score = linearScores.reduce(0) {$0 + $1}
-            seqGroupHashMap[seqPairs] = score
+            ZeroPlus.syncedQueue.sync {
+                seqGroupHashMap[seqPairs] = score
+            }
             return score
         }
     }
@@ -94,7 +96,9 @@ class Evaluator {
         } else {
             let threats = analyzeThreats(seq: seq, for: player)
             let score = convertToScore(threats: threats)
-            seqHashMap[seq] = score
+            ZeroPlus.syncedQueue.sync {
+                seqHashMap[seq] = score
+            }
             return score
         }
     }

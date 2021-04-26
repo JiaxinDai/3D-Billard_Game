@@ -18,17 +18,21 @@
 		1F60C3782168232E00580C99 /* Gomoku_AITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3772168232E00580C99 /* Gomoku_AITests.swift */; };
 		1F60C3832168232E00580C99 /* Gomoku_AIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3822168232E00580C99 /* Gomoku_AIUITests.swift */; };
 		1F60C3932168265C00580C99 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3922168265C00580C99 /* BoardView.swift */; };
-		1F60C39521682F6C00580C99 /* Piece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C39421682F6C00580C99 /* Piece.swift */; };
-		1F60C39721682FE800580C99 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C39621682FE800580C99 /* Board.swift */; };
 		1F60C39921685A8B00580C99 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C39821685A8B00580C99 /* Utilities.swift */; };
-		1F60C39D216863F000580C99 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C39C216863F000580C99 /* History.swift */; };
 		1F60C39F21690DE700580C99 /* BoardWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C39E21690DE700580C99 /* BoardWindowController.swift */; };
 		1F60C3A121690EFD00580C99 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3A021690EFD00580C99 /* Notification.swift */; };
 		1F60C3A921692B0900580C99 /* BoardTextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3A821692B0900580C99 /* BoardTextureView.swift */; };
 		1F64DC4C216BF38000467F78 /* Zobrist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F64DC4B216BF38000467F78 /* Zobrist.swift */; };
 		1FE063E2216B028E00E07006 /* HeuristicEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE063E1216B028E00E07006 /* HeuristicEvaluator.swift */; };
+		6E2152E8FE74E1CB8B5DB4AF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2155977AFEB9703235F587 /* main.swift */; };
+		6E2154702466D8FD0F4C0ADD /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2155D770D6CCD4D5F73BA9 /* Board.swift */; };
+		6E21550CA3BEEE88D232A320 /* Stat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215A54907FCDC7323BA6EA /* Stat.swift */; };
+		6E21575642C1E8FED637AA8A /* Piece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2154E3FD0ADD3779F2BDDA /* Piece.swift */; };
 		6E215B35D100D4E2129ED825 /* Threat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21596D9D70549919D9A364 /* Threat.swift */; };
+		6E215C3F9EDD69F30E97B11C /* Weights.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215E6F8204F4F113F7952D /* Weights.swift */; };
+		6E215D8B25F3BC7BBC55B3AF /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2158F693EE0BE38146445A /* History.swift */; };
 		6E215F318DAE1DB396B2135F /* Zobrist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215EEC6CF8F97B525A64DC /* Zobrist.swift */; };
+		6E215FB093CB4A0A370B3D33 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215E0223C9579C0E0C8B22 /* main.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +62,7 @@
 		1F60C3662168232C00580C99 /* Gomoku_AI.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Gomoku_AI.xcdatamodel; sourceTree = "<group>"; };
 		1F60C3682168232D00580C99 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1F60C36B2168232D00580C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		1F60C36D2168232E00580C99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1F60C36D2168232E00580C99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		1F60C3732168232E00580C99 /* Gomoku AITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Gomoku AITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F60C3772168232E00580C99 /* Gomoku_AITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gomoku_AITests.swift; sourceTree = "<group>"; };
 		1F60C3792168232E00580C99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -66,17 +70,21 @@
 		1F60C3822168232E00580C99 /* Gomoku_AIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gomoku_AIUITests.swift; sourceTree = "<group>"; };
 		1F60C3842168232E00580C99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1F60C3922168265C00580C99 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
-		1F60C39421682F6C00580C99 /* Piece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Piece.swift; sourceTree = "<group>"; };
-		1F60C39621682FE800580C99 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		1F60C39821685A8B00580C99 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		1F60C39C216863F000580C99 /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		1F60C39E21690DE700580C99 /* BoardWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardWindowController.swift; sourceTree = "<group>"; };
 		1F60C3A021690EFD00580C99 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		1F60C3A821692B0900580C99 /* BoardTextureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTextureView.swift; sourceTree = "<group>"; };
 		1F60C3AB21694C7100580C99 /* Gomoku AI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Gomoku AI.entitlements"; sourceTree = "<group>"; };
 		1F64DC4B216BF38000467F78 /* Zobrist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zobrist.swift; sourceTree = "<group>"; };
 		1FE063E1216B028E00E07006 /* HeuristicEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeuristicEvaluator.swift; sourceTree = "<group>"; };
+		6E2154E3FD0ADD3779F2BDDA /* Piece.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Piece.swift; path = "Gomoku AI Model/Components/Piece.swift"; sourceTree = "<group>"; };
+		6E2155977AFEB9703235F587 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = "Gomoku AI Trainer/main.swift"; sourceTree = "<group>"; };
+		6E2155D770D6CCD4D5F73BA9 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Board.swift; path = "Gomoku AI Model/Components/Board.swift"; sourceTree = "<group>"; };
+		6E2158F693EE0BE38146445A /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = History.swift; path = "Gomoku AI Model/Components/History.swift"; sourceTree = "<group>"; };
 		6E21596D9D70549919D9A364 /* Threat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Threat.swift; sourceTree = "<group>"; };
+		6E215A54907FCDC7323BA6EA /* Stat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Stat.swift; path = "Gomoku AI Trainer/Stat.swift"; sourceTree = "<group>"; };
+		6E215E0223C9579C0E0C8B22 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = "Gomoku AI Model/main.swift"; sourceTree = "<group>"; };
+		6E215E6F8204F4F113F7952D /* Weights.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Weights.swift; path = "Gomoku AI Trainer/Weights.swift"; sourceTree = "<group>"; };
 		6E215EEC6CF8F97B525A64DC /* Zobrist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Zobrist.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,10 +116,17 @@
 		1F60C3552168232C00580C99 = {
 			isa = PBXGroup;
 			children = (
-				1F60C3602168232C00580C99 /* Gomoku AI */,
+				1F60C3602168232C00580C99 /* Gomoku AI macOS */,
 				1F60C3762168232E00580C99 /* Gomoku AITests */,
 				1F60C3812168232E00580C99 /* Gomoku AIUITests */,
 				1F60C35F2168232C00580C99 /* Products */,
+				6E2155977AFEB9703235F587 /* main.swift */,
+				6E215A54907FCDC7323BA6EA /* Stat.swift */,
+				6E215E6F8204F4F113F7952D /* Weights.swift */,
+				6E215E0223C9579C0E0C8B22 /* main.swift */,
+				6E2155D770D6CCD4D5F73BA9 /* Board.swift */,
+				6E2158F693EE0BE38146445A /* History.swift */,
+				6E2154E3FD0ADD3779F2BDDA /* Piece.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -125,7 +140,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1F60C3602168232C00580C99 /* Gomoku AI */ = {
+		1F60C3602168232C00580C99 /* Gomoku AI macOS */ = {
 			isa = PBXGroup;
 			children = (
 				1F60C39B21685C0D00580C99 /* Others */,
@@ -139,7 +154,7 @@
 				6E21596D9D70549919D9A364 /* Threat.swift */,
 				6E215EEC6CF8F97B525A64DC /* Zobrist.swift */,
 			);
-			path = "Gomoku AI";
+			path = "Gomoku AI macOS";
 			sourceTree = "<group>";
 		};
 		1F60C3762168232E00580C99 /* Gomoku AITests */ = {
@@ -175,10 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				1F60C3A021690EFD00580C99 /* Notification.swift */,
-				1F60C39421682F6C00580C99 /* Piece.swift */,
-				1F60C39621682FE800580C99 /* Board.swift */,
 				1F60C39821685A8B00580C99 /* Utilities.swift */,
-				1F60C39C216863F000580C99 /* History.swift */,
 				1F4270DC2169A1480081DBFC /* ZeroPlus.swift */,
 				1F4270DE2169B00B0081DBFC /* Evaluator.swift */,
 				1F4270E02169BCEA0081DBFC /* Threat.swift */,
@@ -328,19 +340,23 @@
 				1F64DC4C216BF38000467F78 /* Zobrist.swift in Sources */,
 				1F60C3932168265C00580C99 /* BoardView.swift in Sources */,
 				1F4270E12169BCEA0081DBFC /* Threat.swift in Sources */,
-				1F60C39D216863F000580C99 /* History.swift in Sources */,
 				1F60C39F21690DE700580C99 /* BoardWindowController.swift in Sources */,
 				1F60C39921685A8B00580C99 /* Utilities.swift in Sources */,
-				1F60C39721682FE800580C99 /* Board.swift in Sources */,
 				1F60C3A121690EFD00580C99 /* Notification.swift in Sources */,
 				1F4270DF2169B00B0081DBFC /* Evaluator.swift in Sources */,
 				1F60C3A921692B0900580C99 /* BoardTextureView.swift in Sources */,
-				1F60C39521682F6C00580C99 /* Piece.swift in Sources */,
 				1FE063E2216B028E00E07006 /* HeuristicEvaluator.swift in Sources */,
 				1F60C3622168232C00580C99 /* AppDelegate.swift in Sources */,
 				1F60C3672168232C00580C99 /* Gomoku_AI.xcdatamodeld in Sources */,
 				6E215B35D100D4E2129ED825 /* Threat.swift in Sources */,
 				6E215F318DAE1DB396B2135F /* Zobrist.swift in Sources */,
+				6E2152E8FE74E1CB8B5DB4AF /* main.swift in Sources */,
+				6E21550CA3BEEE88D232A320 /* Stat.swift in Sources */,
+				6E215C3F9EDD69F30E97B11C /* Weights.swift in Sources */,
+				6E215FB093CB4A0A370B3D33 /* main.swift in Sources */,
+				6E2154702466D8FD0F4C0ADD /* Board.swift in Sources */,
+				6E215D8B25F3BC7BBC55B3AF /* History.swift in Sources */,
+				6E21575642C1E8FED637AA8A /* Piece.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

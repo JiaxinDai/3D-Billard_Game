@@ -1,14 +1,28 @@
 import Foundation
 
 typealias ZobristTable = [[[Int]]]
-typealias ZobristMap = Dictionary<Zobrist, Int>
+
 class Zobrist: Hashable {
 
     // This is for accomodating different board dimensions
-    private static var tables = Dictionary<Int,ZobristTable>()
+    private static var tables = [Int: ZobristTable]()
 
-    // Note that it only supports dimension of up to 19.
-    static var hashedTransposMaps = [ZobristMap](repeatElement(ZobristMap(), count: 19))
+    /// Hashed heuristic values of nodes
+    static var heuristicHash = [Zobrist: Int]()
+
+    /// A map that records scores for each coordinate for a specific game state.
+    /// It is used to elimate re-computations when generating heuristic value of a node.
+    static var scoreMap = [Zobrist: [[Int?]]]()
+
+    /// Hashed ordered moves
+    static var orderedMovesHash = [Zobrist: [Move]]()
+
+    /// Slightly boosts performance at a neglegible risk of judging two diffenrent game states to be the same.
+    static var strictEqualityCheck = false
+
+    static let orderedMovesQueue = DispatchQueue(label: "orderedMovesQueue")
+    static let heuristicQueue = DispatchQueue(label: "hueristicQueue")
+    static let scoreMapQueue = DispatchQueue(label: "scoreMapQueue")
 
     let dim: Int
     var matrix = [[Piece]]()
@@ -71,15 +85,17 @@ class Zobrist: Hashable {
     }
 
     static func == (lhs: Zobrist, rhs: Zobrist) -> Bool {
-        let dim = lhs.dim
-        for i in 0..<dim {
-            for q in 0..<dim {
-                if lhs.matrix[i][q] != rhs.matrix[i][q] {
+        if strictEqualityCheck {
+            let dim = lhs.dim
+            for i in 0..<dim {
+                for q in 0..<dim where lhs.matrix[i][q] != rhs.matrix[i][q] {
                     return false
                 }
             }
+            return true
         }
-        return true
+        // Loads faster, but could be faulty!
+        return lhs.hashValue == rhs.hashValue
     }
 
     func get(_ co: Coordinate) -> Piece {
@@ -106,4 +122,51 @@ class Zobrist: Hashable {
         return table
     }
 
+    enum Value {
+        case orderedMoves(_ moves: [Move])
+        case heuristic(_ score: Int)
+        case scoreMap(_ map: [[Int?]])
+    }
+
+    /// Update the values for the current game state on their corresponding serial threads given the new value.
+    func update(_ value: Value) {
+        let copy = Zobrist(zobrist: self)
+        Zobrist.update(copy, value)
+    }
+
+    static func update(_ key: Zobrist, _ value: Value) {
+        switch value {
+        case .orderedMoves(let moves):
+            orderedMovesQueue.sync {
+                orderedMovesHash[key] = moves
+            }
+        case .heuristic(let score):
+            heuristicQueue.sync {
+                heuristicHash[key] = score
+            }
+        case .scoreMap(let map):
+            scoreMapQueue.sync {
+                scoreMap[key] = map
+            }
+        }
+    }
+
+}
+
+extension Zobrist: CustomStringConvertible {
+    public var description: String {
+        var str = ""
+        matrix.forEach { row in
+            row.forEach { col in
+                switch col {
+                case .none: str += "- "
+                case .black: str += "* "
+                case .white: str += "o "
+                }
+            }
+            str += "
+            "
+        }
+        return str
+    }
 }

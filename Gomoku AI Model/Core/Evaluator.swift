@@ -1,13 +1,40 @@
 import Foundation
 
+/**
+ Linearizes and analyzes the 2D matrix provided by the data source, categorizes and hashes linear sequences into
+ threat types. Assign score for a specific point or game state based on threat potential
+ */
 class Evaluator {
-    static var seqHashMap: Dictionary<[Piece], Int> = Dictionary()
-    static var seqGroupHashMap: Dictionary<[SequencePair], Int> = Dictionary()
+    var seqHashMap = [[Piece]: [Threat]]()
+    let seqHashQueue = DispatchQueue(label: "seqHashQueue")
+
+    static let win: Int = Int(1E14)
+    var weights: [Threat: Int] = [
+        .five: Int(1E15), // 5
+        .straightFour: Int(1E5),      // s4
+        .straightPokedFour: Int(1E4),   // sp4
+        .blockedFour: Int(1E4),         // b4
+        .blockedPokedFour: Int(1E4),     // bp4
+        .straightThree: Int(5E3),        // s3
+        .straightPokedThree: Int(5E3),    // sp3
+        .blockedThree: 1670,          // b3
+        .blockedPokedThree: 1670,     // bp3
+        .straightTwo: 1500,           // s2
+        .straightPokedTwo: 1500,      // sp2
+        .blockedTwo: 500,             // b2
+        .blockedPokedTwo: 300,        // bp2
+        .none: 0
+    ]
 
     /**
-     Point evaluation
+     Extract the weight for a specific threat type.
+     - Returns: weight assignment for the threat
      */
-    static func evaluate(for player: Piece, at co: Coordinate, pieces: [[Piece]]) -> Int {
+    func val(_ threat: Threat) -> Int {
+        return weights[threat]!
+    }
+
+    func sequentialize(_ pieces: [[Piece]], for player: Piece, at co: Coordinate) -> [[Piece]] {
         let row = co.row, col = co.col, dim = pieces.count
         let opponent = player.next()
 
@@ -18,7 +45,8 @@ class Evaluator {
         // Linearize the board for higher efficiency
         func explore(x: Int, y: Int) -> [Piece] {
             var seq = [Piece]()
-            loop: for i in 1...5  {
+            var empty = 0
+            loop: for i in 1...5 {
                 let curRow = row + y * i, curCol = col + x * i
                 if !isValid(col: curCol, row: curRow) {
                     seq.append(opponent) // It doesn't matter which color the player is, hitting the wall == an opposite piece
@@ -28,6 +56,10 @@ class Evaluator {
                 switch piece {
                 case .none:
                     seq.append(.none)
+                    if empty > 0 {
+                        break loop
+                    }
+                    empty += 1
                 default:
                     seq.append(piece)
                     if piece == opponent {
@@ -38,78 +70,68 @@ class Evaluator {
             return seq
         }
 
-
-
-        func genSequence(x1: Int, y1: Int, x2: Int, y2: Int) -> SequencePair {
+        func genSequence(x1: Int, y1: Int, x2: Int, y2: Int) -> [Piece] {
             var seqA: [Piece] = explore(x: x1, y: y1).reversed()
-            var org = seqA // The sequence without the addition of the new piece, since we are only concerned about difference
             seqA.append(player)
-            org.append(.none)
-            let seqB = explore(x: x2, y: y2)
-            seqA.append(contentsOf: seqB)
-            org.append(contentsOf: seqB)
-            return SequencePair(new: seqA, org: org)
+            seqA.append(contentsOf: explore(x: x2, y: y2))
+            return seqA
         }
 
-        let hSeqPair = genSequence(x1: -1, y1: 0, x2: 1, y2: 0)    // Horizontal (from left to right)
-        let vSeqPair = genSequence(x1: 0, y1: -1, x2: 0, y2: 1)    // Vertical (from up to down)
-        let d1SeqPair = genSequence(x1: -1, y1: 1, x2: 1, y2: -1)  // Diagnally (from lower left to upper right)
-        let d2SeqPair = genSequence(x1: -1, y1: -1, x2: 1, y2: 1) // Diagnally (from upper left to lower right)
+        let hSeq = genSequence(x1: -1, y1: 0, x2: 1, y2: 0)    // Horizontal (from left to right)
+        let vSeq = genSequence(x1: 0, y1: -1, x2: 0, y2: 1)    // Vertical (from up to down)
+        let d1Seq = genSequence(x1: -1, y1: 1, x2: 1, y2: -1)  // Diagnally (from lower left to upper right)
+        let d2Seq = genSequence(x1: -1, y1: -1, x2: 1, y2: 1) // Diagnally (from upper left to lower right)
 
-
-
-
-        let seqPairs = [hSeqPair, vSeqPair, d1SeqPair, d2SeqPair]
-
-
-        return cacheOrGet(seqPairs: seqPairs, for: player)
+        return [hSeq, vSeq, d1Seq, d2Seq]
     }
 
-    static func cacheOrGet(seqPairs: [SequencePair], for player: Piece) -> Int  {
-        if let cached = seqGroupHashMap[seqPairs] {
-            return cached
-        } else {
-            let linearScores = seqPairs.map{ seqPair -> Int in
-                let newScore = cacheOrGet(seq: seqPair.new, for: player) // Convert sequences to threat types
-                let oldScore = cacheOrGet(seq: seqPair.org, for: player) // Convert sequences to threat types
-                return newScore - oldScore
-            }
-            let score = linearScores.reduce(0) {$0 + $1}
-            ZeroPlus.syncedQueue.sync {
-                seqGroupHashMap[seqPairs] = score
-            }
-            return score
-        }
+    /**
+     - Returns: An array containing identified threats, e.g. [.straightPokedThree, .blockedFour]
+     */
+    func analyze(_ pieces: [[Piece]], for player: Piece, at co: Coordinate) -> [Threat] {
+        return sequentialize(pieces, for: player, at: co)
+                .map {cacheOrGet(seq: $0, for: player)} // Convert sequences to threat types
+                .flatMap {$0}
     }
 
-    static func convertToScore(threats: [Threat]) -> Int {
-        return threats.map{$0.rawValue}  // Convert threat types to score
-                .reduce(0){$0 + $1} // Sum it up
+    /**
+     Point evaluation
+     */
+    func evaluate(_ pieces: [[Piece]], for player: Piece, at co: Coordinate) -> Int {
+        return analyze(pieces, for: player, at: co)
+                .map {val($0)}  // Convert threat types to score
+                .reduce(0) {$0 + $1} // Sum it up
     }
 
     /**
      Results in 1/3 speed up
      */
-    static func cacheOrGet(seq: [Piece], for player: Piece) -> Int {
+    private func cacheOrGet(seq: [Piece], for player: Piece) -> [Threat] {
         if let cached = seqHashMap[seq] {
             return cached
         } else {
-            let threats = analyzeThreats(seq: seq, for: player)
-            let score = convertToScore(threats: threats)
-            ZeroPlus.syncedQueue.sync {
-                seqHashMap[seq] = score
+            let threats = analyzeThreats(seq, for: player)
+            seqHashQueue.sync {
+                seqHashMap[seq] = threats
             }
-            return score
+            return threats
         }
     }
 
-    // The results could be hashed!!!
-    static func analyzeThreats(seq: [Piece], for player: Piece) -> [Threat] {
+    typealias Pattern = (same: Int, gap: Int, startIdx: Int, endIdx: Int, gapIdx: Int)
+
+    /**
+     Analyze sequence of pieces for threats.
+     - Parameters:
+        - seq: The sequence of pieces to be analyzed
+        - for: The player to analyze threats for.
+     - Returns: Identified threats as in [.straightThree, .blockedTwo], etc.
+     */
+    private func analyzeThreats(_ seq: [Piece], for player: Piece) -> [Threat] {
         let opponent = player.next()
         let leftBlocked = seq.first! == opponent
         let rightBlocked = seq.last! == opponent
 
-        typealias Pattern = (same: Int, gap: Int, startIdx: Int, endIdx: Int, gapIdx: Int)
         func findPatterns(from a: Int, to b: Int) -> [Pattern] {
             var gap = 0
             var same = 0
@@ -178,33 +200,33 @@ class Evaluator {
             let pattern = (same, gap, startIdx, endIdx, gapIdx)
             identifiedPatterns.append(pattern)
 
-            return identifiedPatterns.filter{$0.same > 1}
+            return identifiedPatterns.filter {$0.same > 1}
         }
 
-        // Some inefficiency here... if one or both ends terminate with an opponent piece
+        // If one or both ends terminate with an opponent piece
         if leftBlocked && rightBlocked {
             if seq.count - 2 < 5 {
                 return [.none]
             } else {
                 let startIdx = 1, endIdx = seq.count - 2
                 let patterns = findPatterns(from: startIdx, to: endIdx)
-                let resolved = patterns.map{Sequence.resolve(same: $0.same, gap: $0.gap, gapIdx: $0.gapIdx)}
+                let resolved = patterns.map {Sequence.resolve(same: $0.same, gap: $0.gap, gapIdx: $0.gapIdx)}
                 return zip(patterns, resolved).map {(pattern, sequence) -> Threat in
                     let blocked = pattern.startIdx == startIdx || pattern.endIdx == endIdx
                     let type: Head = (blocked ? .blocked : .straight)
                     return sequence.toThreatType(head: type)
                 }
             }
-        } else if leftBlocked  {
+        } else if leftBlocked {
             let patterns = findPatterns(from: 1, to: seq.count - 1)
-            let resolved = patterns.map{Sequence.resolve(same: $0.same, gap: $0.gap, gapIdx: $0.gapIdx)}
+            let resolved = patterns.map {Sequence.resolve(same: $0.same, gap: $0.gap, gapIdx: $0.gapIdx)}
             return zip(patterns, resolved).map {(pattern, sequence) in
                 let type: Head = (pattern.startIdx == 1 ? .blocked : .straight)
                 return sequence.toThreatType(head: type)
             }
         } else if rightBlocked {
             let patterns = findPatterns(from: 0, to: seq.count - 2)
-            let resolved = patterns.map{Sequence.resolve(same: $0.same, gap: $0.gap, gapIdx: $0.gapIdx)}
+            let resolved = patterns.map {Sequence.resolve(same: $0.same, gap: $0.gap, gapIdx: $0.gapIdx)}
             return zip(patterns, resolved).map {(pattern, sequence) in
                 let type: Head = (pattern.endIdx == seq.count - 2 ? .blocked : .straight)
                 return sequence.toThreatType(head: type)
@@ -213,25 +235,7 @@ class Evaluator {
 
         // Free ends
         return findPatterns(from: 0, to: seq.count - 1)
-                .map{Sequence.resolve(same: $0.same, gap: $0.gap, gapIdx: $0.gapIdx)}
-                .map{$0.toThreatType(head: .straight)}
-    }
-
-    class SequencePair: Hashable {
-        var hashValue: Int {
-            return 0 ^ new.hashValue ^ org.hashValue
-        }
-
-        static func == (lhs: Evaluator.SequencePair, rhs: Evaluator.SequencePair) -> Bool {
-            return lhs.new == rhs.new && lhs.org == rhs.org
-        }
-
-        var new: [Piece]
-        var org: [Piece]
-
-        init(new: [Piece], org: [Piece]) {
-            self.new = new
-            self.org = org
-        }
+                .map {Sequence.resolve(same: $0.same, gap: $0.gap, gapIdx: $0.gapIdx)}
+                .map {$0.toThreatType(head: .straight)}
     }
 }

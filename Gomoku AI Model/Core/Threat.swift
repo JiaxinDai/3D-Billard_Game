@@ -1,47 +1,28 @@
 import Foundation
 
-enum Threat: Int, CustomStringConvertible {
+enum Threat: String {
+    case five = "5"
 
-    static let win = 1000000000000000
-    static let interestThreshold = 6000
+    case straightFour = "s-4"
+    case straightPokedFour = "s-p-4"
+    case blockedFour = "b-4"
+    case blockedPokedFour = "b-p-4"
 
-    var description: String {
-        switch self {
-        case .five: return "5"
-        case .straightFour: return "s-4"
-        case .straightThree: return "s-3"
-        case .straightTwo: return "s-2"
-        case .blockedFour: return "b-4"
-        case .blockedThree: return "b-3"
-        case .blockedTwo: return "b-2"
-        case .straightPokedFour: return "s-p-4"
-        case .straightPokedThree: return "s-p-3"
-        case .straightPokedTwo: return "s-p-2"
-        case .blockedPokedFour: return "b-p-4"
-        case .blockedPokedThree: return "b-p-3"
-        case .blockedPokedTwo: return "b-p-2"
-        case .none: return "none"
-        }
-    }
+    case straightThree = "s-3"
+    case straightPokedThree = "s-p-3"
+    case blockedThree = "b-3"
+    case blockedPokedThree = "b-p-3"
 
-    case five = 10000000000000000 // Just a large number that nullifies the influence of the rest
+    case straightTwo = "s-2"
+    case straightPokedTwo = "s-p-2"
+    case blockedTwo = "b-2"
+    case blockedPokedTwo = "b-p-2"
 
-    case straightFour =  100000
-    case straightPokedFour = 9000
-    case blockedFour =   5000
-    case blockedPokedFour = 4999
+    case none
+}
 
-    case straightThree = 4000
-    case straightPokedThree = 3999
-    case blockedThree =  1000
-    case blockedPokedThree = 999
-
-    case straightTwo = 100
-    case straightPokedTwo = 90
-    case blockedTwo = 80
-    case blockedPokedTwo = 70
-
-    case none = 0
+protocol EvaluatorDataSource {
+    var pieces: [[Piece]] {get}
 }
 
 enum Head {

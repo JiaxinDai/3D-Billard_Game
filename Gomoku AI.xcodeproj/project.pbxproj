@@ -15,9 +15,7 @@
 		1F60C3782168232E00580C99 /* Gomoku_AITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3772168232E00580C99 /* Gomoku_AITests.swift */; };
 		1F60C3832168232E00580C99 /* Gomoku_AIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3822168232E00580C99 /* Gomoku_AIUITests.swift */; };
 		1F60C3932168265C00580C99 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3922168265C00580C99 /* BoardView.swift */; };
-		1F60C39921685A8B00580C99 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C39821685A8B00580C99 /* Utilities.swift */; };
 		1F60C39F21690DE700580C99 /* BoardWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C39E21690DE700580C99 /* BoardWindowController.swift */; };
-		1F60C3A121690EFD00580C99 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3A021690EFD00580C99 /* Notification.swift */; };
 		1F60C3A921692B0900580C99 /* BoardTextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3A821692B0900580C99 /* BoardTextureView.swift */; };
 		1FE063E2216B028E00E07006 /* HeuristicEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE063E1216B028E00E07006 /* HeuristicEvaluator.swift */; };
 		6E2150459A292C128C8C1C2F /* NegaScout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2159A6F7D5CE226DA5009B /* NegaScout.swift */; };
@@ -31,10 +29,12 @@
 		6E21560C00A1379AAFC9B994 /* ZeroPlus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2151E963D99A73604BE3A9 /* ZeroPlus.swift */; };
 		6E215663E573AAA6A1D0B676 /* Minimax.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21565F5F45684B79A57131 /* Minimax.swift */; };
 		6E21575642C1E8FED637AA8A /* Piece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2154E3FD0ADD3779F2BDDA /* Piece.swift */; };
+		6E2157966E03604E6D7EA0EE /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215C8F9D41F6D65DDD32CF /* Utilities.swift */; };
 		6E21584D6C608E0EFEABF46F /* Evaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215DC82FDD2B6D20C4F7F7 /* Evaluator.swift */; };
 		6E215BAB964B6D893099DB53 /* ZeroSum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21540EB86942A3777C30D4 /* ZeroSum.swift */; };
 		6E215C3F9EDD69F30E97B11C /* Weights.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215E6F8204F4F113F7952D /* Weights.swift */; };
 		6E215CFEFF84C8FBC7951707 /* Cortex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2159E426AD6983DFDC04F4 /* Cortex.swift */; };
+		6E215D227A0998D39E54D72F /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215EF01DB438084E7632A3 /* Notification.swift */; };
 		6E215D2BAA686CE83F013B9D /* Zobrist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215F6FE0F6323C108FDBEA /* Zobrist.swift */; };
 		6E215D8B25F3BC7BBC55B3AF /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2158F693EE0BE38146445A /* History.swift */; };
 		6E215FB093CB4A0A370B3D33 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215E0223C9579C0E0C8B22 /* main.swift */; };
@@ -72,9 +72,7 @@
 		1F60C3822168232E00580C99 /* Gomoku_AIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gomoku_AIUITests.swift; sourceTree = "<group>"; };
 		1F60C3842168232E00580C99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1F60C3922168265C00580C99 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
-		1F60C39821685A8B00580C99 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		1F60C39E21690DE700580C99 /* BoardWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardWindowController.swift; sourceTree = "<group>"; };
-		1F60C3A021690EFD00580C99 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		1F60C3A821692B0900580C99 /* BoardTextureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTextureView.swift; sourceTree = "<group>"; };
 		1F60C3AB21694C7100580C99 /* Gomoku AI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Gomoku AI.entitlements"; sourceTree = "<group>"; };
 		1FE063E1216B028E00E07006 /* HeuristicEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeuristicEvaluator.swift; sourceTree = "<group>"; };
@@ -92,9 +90,11 @@
 		6E2159A6F7D5CE226DA5009B /* NegaScout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NegaScout.swift; path = "Gomoku AI Model/Core/Cortices/NegaScout.swift"; sourceTree = "<group>"; };
 		6E2159E426AD6983DFDC04F4 /* Cortex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Cortex.swift; path = "Gomoku AI Model/Core/Cortices/Cortex.swift"; sourceTree = "<group>"; };
 		6E215A54907FCDC7323BA6EA /* Stat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Stat.swift; path = "Gomoku AI Trainer/Stat.swift"; sourceTree = "<group>"; };
+		6E215C8F9D41F6D65DDD32CF /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utilities.swift; path = "Gomoku AI Model/Utilities/Utilities.swift"; sourceTree = "<group>"; };
 		6E215DC82FDD2B6D20C4F7F7 /* Evaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Evaluator.swift; path = "Gomoku AI Model/Core/Evaluator.swift"; sourceTree = "<group>"; };
 		6E215E0223C9579C0E0C8B22 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = "Gomoku AI Model/main.swift"; sourceTree = "<group>"; };
 		6E215E6F8204F4F113F7952D /* Weights.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Weights.swift; path = "Gomoku AI Trainer/Weights.swift"; sourceTree = "<group>"; };
+		6E215EF01DB438084E7632A3 /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Notification.swift; path = "Gomoku AI Model/Utilities/Notification.swift"; sourceTree = "<group>"; };
 		6E215F6FE0F6323C108FDBEA /* Zobrist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Zobrist.swift; path = "Gomoku AI Model/Core/Zobrist.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -148,6 +148,8 @@
 				6E2159A6F7D5CE226DA5009B /* NegaScout.swift */,
 				6E215456791A6A5CC23EE1E1 /* ZeroMax.swift */,
 				6E21540EB86942A3777C30D4 /* ZeroSum.swift */,
+				6E215EF01DB438084E7632A3 /* Notification.swift */,
+				6E215C8F9D41F6D65DDD32CF /* Utilities.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -208,8 +210,6 @@
 		1F60C3AA21694A7000580C99 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				1F60C3A021690EFD00580C99 /* Notification.swift */,
-				1F60C39821685A8B00580C99 /* Utilities.swift */,
 				1FE063E1216B028E00E07006 /* HeuristicEvaluator.swift */,
 			);
 			name = Model;
@@ -353,8 +353,6 @@
 				1F60C3642168232C00580C99 /* ViewController.swift in Sources */,
 				1F60C3932168265C00580C99 /* BoardView.swift in Sources */,
 				1F60C39F21690DE700580C99 /* BoardWindowController.swift in Sources */,
-				1F60C39921685A8B00580C99 /* Utilities.swift in Sources */,
-				1F60C3A121690EFD00580C99 /* Notification.swift in Sources */,
 				1F60C3A921692B0900580C99 /* BoardTextureView.swift in Sources */,
 				1FE063E2216B028E00E07006 /* HeuristicEvaluator.swift in Sources */,
 				1F60C3622168232C00580C99 /* AppDelegate.swift in Sources */,
@@ -377,6 +375,8 @@
 				6E2150459A292C128C8C1C2F /* NegaScout.swift in Sources */,
 				6E21540C7B223AEC2F25BF93 /* ZeroMax.swift in Sources */,
 				6E215BAB964B6D893099DB53 /* ZeroSum.swift in Sources */,
+				6E215D227A0998D39E54D72F /* Notification.swift in Sources */,
+				6E2157966E03604E6D7EA0EE /* Utilities.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

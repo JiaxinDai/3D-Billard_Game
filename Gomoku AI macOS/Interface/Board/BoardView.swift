@@ -1,99 +1,50 @@
 import Cocoa
 import CoreGraphics
 
-public typealias Coordinate = (col: Int, row: Int)
-
 @IBDesignable class BoardView: NSView {
 
     @IBInspectable var pieceScale: CGFloat = 0.95
-
     @IBInspectable var vertexColor: NSColor = .black
     @IBInspectable var zeroPlusThemeColor: NSColor = .yellow
 
-    var gridLineWidth: CGFloat {
-        return gap / 20
+    ///Vertices for 19 x 19
+    var goVertices: [Coordinate] = [(3, 3), (15, 3), (3, 15), (15, 15), (9, 9), (9, 15), (15, 9), (9, 3), (3, 9)]
+
+    /// Vertices for 15 x 15
+    var gomokuVertices: [Coordinate] = [(3, 3), (11, 3), (3, 11), (11, 11), (7, 7)]
+
+    weak var delegate: BoardViewDelegate?
+    weak var dataSource: BoardViewDataSource?
+
+    var pendingPieceCo: Coordinate?
+
+    var activeMap: [[Bool]]? {
+        didSet {
+            updateDisplay()
+        }
     }
 
-    var pieceRadius: CGFloat {
-        return gap / 2 * pieceScale
-    }
-
-    var vertexRadius: CGFloat {
-        return gridLineWidth * 2
+    var zpHistory: History? {
+        didSet {
+            updateDisplay()
+        }
     }
 
     // Wether track mouse is moving within the area of the board
     var mouseInScope = false
 
-    /**
-     Coordinates in the format of (row, column) of the standard vertices of a go board.
-     For 19 x 19
-     */
-    var goVertices: [Coordinate] = {
-        return [(3, 3), (15, 3), (3, 15), (15, 15), (9, 9), (9, 15), (15, 9), (9, 3), (3, 9)]
-    }()
-
-    /**
-     Vertices for 15 x 15
-     */
-    var gomokuVertices: [Coordinate] = {
-        return [(3, 3), (11, 3), (3, 11), (11, 11), (7, 7)]
-    }()
-
-    var boardWidth: CGFloat {
-        return self.bounds.width - cornerOffset * 2
-    }
-
-    var gap: CGFloat {
-        return self.bounds.width / CGFloat(dimension)
-    }
-
-    var dimension: Int = 19 {
+    var activeMapVisible = false
+    var visualizationEnabled = true
+    var historyVisible = true
+    var showCalcDuration = false
+    var drawsPendingPiece = true
+    var highlightLastStep = true {
         didSet {
-            DispatchQueue.main.async {[unowned self] in
-                self.setNeedsDisplay(self.bounds)
+            if let co = board.history.stack.last {
+                setNeedsDisplay(rect(at: co))
             }
         }
     }
-
-    var pieces: [[Piece]]? {
-        didSet {
-            // If the pieces passed in is nill, the dimension should remain unchanged
-            dimension = pieces?.count ?? dimension
-        }
-    }
-
-    var board: Board {
-        return delegate!.board
-    }
-
-    var cornerOffset: CGFloat {
-        return gap / 2
-    }
-
-    var pendingPieceCo: Coordinate?
-    var shouldDrawPendingPiece = true
-    func rect(at co: Coordinate) -> CGRect {
-        return CGRect(center: onScreen(co),
-                size: CGSize(width: pieceRadius * 2, height: pieceRadius * 2))
-    }
-
-    var delegate: BoardViewDelegate?
-    var activeMap: [[Bool]]? {
-        didSet {
-            setNeedsDisplay(bounds)
-        }
-    }
-    var zeroPlusHistory: History? {
-        didSet {
-            zeroPlusHistory?.stack.forEach{setNeedsDisplay(rect(at: $0))}
-            zeroPlusHistory?.reverted.forEach{setNeedsDisplay(rect(at: $0))}
-        }
-    }
-
-    var activeMapVisible = true
-    var zeroPlusVisualization = true
-    var zeroPlusHistoryVisible = true
     var overlayStepNumber = false {
         didSet {
             setNeedsDisplay(bounds)
@@ -102,11 +53,7 @@ public typealias Coordinate = (col: Int, row: Int)
 
     var winningCoordinates: [Coordinate]? {
         didSet {
-            if let coordinates = winningCoordinates {
-                for co in coordinates {
-                    setNeedsDisplay(rect(at: co))
-                }
-            }
+            updateDisplay()
         }
     }
 
@@ -119,11 +66,6 @@ public typealias Coordinate = (col: Int, row: Int)
         super.draw(dirtyRect)
         self.wantsLayer = true
 
-        // Fill board background
-        let outerRect = CGRect(origin: dirtyRect.origin, size: dirtyRect.size)
-        NSColor(red: 0.839, green: 0.706, blue: 0.412, alpha: 0.5).setFill()
-        outerRect.fill()
-
         // Draw board gird lines
         NSColor.black.withAlphaComponent(0.5).setStroke()
         pathForGrid().stroke()
@@ -134,72 +76,102 @@ public typealias Coordinate = (col: Int, row: Int)
 
         drawPieces()
 
-        if !board.zeroIsThinking {
+        if !board.zeroIsThinking && !board.gameHasEnded {
             drawPendingPiece()
         }
 
-        if zeroPlusVisualization {
+        if visualizationEnabled {
             if activeMapVisible {
                 drawActiveMap()
             }
-            if zeroPlusHistoryVisible {
+            if historyVisible {
                 drawZeroPlusHistory()
             }
         }
 
         if overlayStepNumber {
             drawStepNumberOverlay()
-        }
-
-        if board.gameHasEnded && !overlayStepNumber {
-            highlightWinningCoordinates()
+        } else {
+            if board.gameHasEnded {
+                highlightWinningCoordinates()
+            } else if highlightLastStep {
+                highlightMostRecentStep()
+            }
         }
     }
 
-    func highlightWinningCoordinates() {
+    private func highlightMostRecentStep() {
+        if let co = board.history.stack.last {
+            let piece = pieces[co.row][co.col]
+            let color: NSColor = piece == .black ? .green : .red
+            color.withAlphaComponent(0.8).setStroke()
+            if board.zeroIsThinking && showCalcDuration { // Display time lapsed
+                let sec = Int(Date().timeIntervalSince1970 - board.calcStartTime)
+                drawDigitOverlay(num: sec, for: piece, at: co, colorful: true)
+            } else {
+                var rect = self.rect(at: co)
+                rect = CGRect(center: CGPoint(x: rect.midX, y: rect.midY),
+                        size: CGSize(width: rect.width / 4, height: rect.height / 4))
+                let path = NSBezierPath(rect: rect)
+                path.lineWidth = gridLineWidth
+                path.lineJoinStyle = .round
+                path.stroke()
+            }
+        }
+    }
+
+    private func rect(at co: Coordinate) -> CGRect {
+        return CGRect(center: onScreen(co),
+                size: CGSize(width: pieceRadius * 2, height: pieceRadius * 2))
+    }
+
+    private func highlightWinningCoordinates() {
         winningCoordinates?.forEach {
             var rect = self.rect(at: $0)
-            rect = CGRect(center: CGPoint(x: rect.midX, y: rect.midY), size: CGSize(width: rect.width / 4, height: rect.height / 4))
+            rect = CGRect(center: CGPoint(x: rect.midX, y: rect.midY),
+                    size: CGSize(width: rect.width / 4, height: rect.height / 4))
             let dot = NSBezierPath(ovalIn: rect)
-            let color: NSColor = pieces![$0.row][$0.col] == .black ? .green : .red
+            let color: NSColor = pieces[$0.row][$0.col] == .black ? .green : .red
             color.withAlphaComponent(0.8).setFill()
             dot.fill()
         }
     }
 
-    func drawStepNumberOverlay() {
+    private func drawStepNumberOverlay() {
         var color: Piece = .black
         for (num, co) in board.history.stack.enumerated() {
-            drawStepNumberOverlay(num: num + 1, for: color, at: co, isMostRecent: num == board.history.stack.count - 1)
+            drawDigitOverlay(num: num + 1, for: color, at: co, colorful: num == board.history.stack.count - 1)
             color = color.next()
         }
     }
 
-    private func drawStepNumberOverlay(num: Int, for piece: Piece, at co: Coordinate, isMostRecent: Bool) {
+    private func drawDigitOverlay(num: Int, for piece: Piece, at co: Coordinate, colorful: Bool) {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
+        let radius = pieceRadius / 4 * 3
         let attributes = [
-            NSAttributedString.Key.paragraphStyle  : paragraphStyle,
-            .font            : NSFont.systemFont(ofSize: pieceRadius),
-            .foregroundColor : piece == .black ? isMostRecent ? NSColor.green : NSColor.white : isMostRecent ? .red : .black,
+            NSAttributedString.Key.paragraphStyle: paragraphStyle,
+            .font: NSFont.systemFont(ofSize: radius),
+            .foregroundColor: piece == .black ? colorful ? NSColor.green : NSColor.white : colorful ? .red : .black
         ]
-
-        let textRect = CGRect(center: onScreen(co), size: CGSize(width: 50, height: pieceRadius))
-        let attrString = NSAttributedString(string: "\(num)", attributes: attributes)
+        var ctr = onScreen(co)
+        ctr.y += radius / 8
+        let textRect = CGRect(center: ctr, size: CGSize(width: pieceRadius * 2, height: radius))
+        let attrString = NSAttributedString(string: "(num)", attributes: attributes)
         attrString.draw(in: textRect)
     }
 
-    func drawZeroPlusHistory() {
-        if let history = zeroPlusHistory {
+    private func drawZeroPlusHistory() {
+        if let history = zpHistory {
             var player = board.curPlayer
             for (col, row) in history.stack {
                 let ctr = onScreen(Coordinate(col: col, row: row))
                 let rect = CGRect(center: ctr, size: CGSize(width: pieceRadius * 2, height: pieceRadius * 2))
                 switch player {
                 case .black:
-                    blackPieceImg?.draw(in: rect)
+                    blackWithAlpha?.draw(in: rect)
                 case .white:
-                    whitePieceImg?.draw(in: rect)
+                    whiteWithAlpha?.draw(in: rect)
                 case .none: break
                 }
                 player = player.next()
@@ -207,20 +179,39 @@ public typealias Coordinate = (col: Int, row: Int)
         }
     }
 
-    func drawActiveMap() {
+    var dampenerMap: [[CGFloat]] = [[CGFloat]](repeating: [CGFloat](repeating: 0, count: 19), count: 19)
+
+    func updateDampenerMap() {
+        activeMap?.enumerated().forEach { (r, row) in
+            row.enumerated().forEach { (c, b) in
+                let i = dampenerMap[r][c]
+                if i < 1 && b {
+                    dampenerMap[r][c] += 0.03
+                } else if i > 0 {
+                    dampenerMap[r][c] -= 0.03
+                }
+            }
+        }
+    }
+
+    private func drawActiveMap() {
         guard let map = self.activeMap else {
             return
         }
+        updateDampenerMap()
         for row in 0..<map.count {
             for col in 0..<map[row].count {
                 let ctr = onScreen(Coordinate(col: col, row: row))
-                let rect = CGRect(center: ctr, size: CGSize(width: pieceRadius / 2, height: pieceRadius / 2))
-                if map[row][col] {
-                    let color: NSColor = board.curPlayer == .black ? .green : .yellow
-                    color.withAlphaComponent(0.8).setStroke()
-                    let path = NSBezierPath(rect: rect)
+                let scale = dampenerMap[row][col]
+                var radius = pieceRadius
+                radius *= scale
+                let rect = CGRect(center: ctr, size: CGSize(width: radius, height: radius))
+                if scale > 0 {
+                    let color: NSColor = board.curPlayer == .black ? .black : .white
+                    color.withAlphaComponent(0.5).setFill()
+                    let path = NSBezierPath(ovalIn: rect)
                     path.lineWidth = gridLineWidth
-                    path.stroke()
+                    path.fill() // Should stroke look better?
                 }
             }
         }
@@ -255,7 +246,7 @@ public typealias Coordinate = (col: Int, row: Int)
     }
 
     private func redrawPendingCo() {
-        if let co = pendingPieceCo, shouldDrawPendingPiece {
+        if let co = pendingPieceCo, drawsPendingPiece {
             setNeedsDisplay(rect(at: co))
         }
     }
@@ -266,7 +257,7 @@ public typealias Coordinate = (col: Int, row: Int)
      */
     override func mouseMoved(with event: NSEvent) {
         let curCo = onBoard(relPos(evt: event))
-        if shouldDrawPendingPiece {
+        if drawsPendingPiece {
             if let co = pendingPieceCo {
                 setNeedsDisplay(rect(at: co)) // Erase old pending piece
                 if curCo != co {
@@ -278,16 +269,12 @@ public typealias Coordinate = (col: Int, row: Int)
         }
     }
 
-    /**
-     Render the board in detail when live resize is finished
-     */
+    /// Render the board in detail when live resize is finished
     override func viewDidEndLiveResize() {
         setNeedsDisplay(bounds)
     }
 
-    /**
-     Activates tracking, otherwise mouseMoved, mouseEntered, mouseExited wouldn't be called.
-     */
+    /// Activates tracking, otherwise mouseMoved, mouseEntered, mouseExited wouldn't be called.
     override func updateTrackingAreas() {
         for trackingArea in self.trackingAreas {
             self.removeTrackingArea(trackingArea)
@@ -297,14 +284,11 @@ public typealias Coordinate = (col: Int, row: Int)
         self.addTrackingArea(trackingArea)
     }
 
-
-    /**
-     Draw a half transparent piece at the coordinate that the mouse is hovering over
-     */
-    func drawPendingPiece() {
+    /// Draw a half transparent piece at the coordinate that the mouse is hovering over
+    private func drawPendingPiece() {
         if let co = pendingPieceCo, mouseInScope {
-            if !board.isValid(co) { return }
-            if pieces == nil || pieces![co.row][co.col] == .none { // If the coordinate is not occupied
+            if !isValid(co, dim) { return }
+            if pieces[co.row][co.col] == .none { // If the coordinate is not occupied
                 let rect = self.rect(at: co)
                 if board.curPlayer == .black {
                     blackWithAlpha?.draw(in: rect)
@@ -315,13 +299,8 @@ public typealias Coordinate = (col: Int, row: Int)
         }
     }
 
-    /**
-     Draw the arrangement of black and white pieces on the board
-     */
+    /// Draw the arrangement of black and white pieces on the board
     private func drawPieces() {
-        guard let pieces = self.pieces else {
-            return
-        }
         for row in 0..<pieces.count {
             for col in 0..<pieces[row].count {
                 let ctr = onScreen(Coordinate(col: col, row: row))
@@ -346,7 +325,7 @@ public typealias Coordinate = (col: Int, row: Int)
     private func pathForGrid() -> NSBezierPath {
         let path = NSBezierPath()
         path.move(to: CGPoint(x: cornerOffset, y: cornerOffset))
-        (0..<dimension).map{CGFloat($0)}.forEach{
+        (0..<dim).map {CGFloat($0)}.forEach {
             //draw the vertical lines
             path.move(to: CGPoint(x: cornerOffset + $0 * gap, y: cornerOffset))
             path.line(to: CGPoint(x: cornerOffset + $0 * gap, y: bounds.height - cornerOffset))
@@ -360,39 +339,82 @@ public typealias Coordinate = (col: Int, row: Int)
         return path
     }
 
-    /**
-     Draw the 9 strategic points on the go board
-     */
+    /// Draw the 9 strategic points on the go board
     private func drawVertices() {
         self.vertexColor.setFill()
         let vertices = board.dimension == 15 ? gomokuVertices : goVertices
-        vertices.map{onScreen($0)}.forEach {
+        vertices.map {onScreen($0)}.forEach {
             CGContext.fillCircle(center: $0, radius: vertexRadius)
         }
     }
 
-    /**
-     Convert a coordinate to position on screen
-     */
-    private func onScreen(_ coordinate: Coordinate) -> CGPoint {
+    /// Convert a coordinate to position on screen
+    public func onScreen(_ coordinate: Coordinate) -> CGPoint {
         return CGPoint(
                 x: cornerOffset + CGFloat(coordinate.col) * gap,
                 y: bounds.height - (cornerOffset + CGFloat(coordinate.row) * gap)
         )
     }
 
-    /**
-     Convert a position on screen to coordinate
-     */
+    /// Convert a position on screen to coordinate
     public func onBoard(_ onScreen: CGPoint) -> Coordinate {
         func convert(_ n: CGFloat) -> Int {
             return Int((n - cornerOffset) / gap + 0.5)
         }
-        return (convert(onScreen.x), dimension - convert(onScreen.y) - 1)
+        return (convert(onScreen.x), dim - convert(onScreen.y) - 1)
+    }
+
+    /// Mark the view as outdated and update in the main thread
+    public func updateDisplay() {
+        DispatchQueue.main.async {[unowned self] in
+            self.setNeedsDisplay(self.bounds)
+        }
     }
 }
 
-protocol BoardViewDelegate {
-    var board: Board {get}
+// Getters
+extension BoardView {
+    var gridLineWidth: CGFloat {
+        return gap / 20
+    }
+
+    var pieceRadius: CGFloat {
+        return gap / 2 * pieceScale
+    }
+
+    var vertexRadius: CGFloat {
+        return gridLineWidth * 2
+    }
+
+    var boardWidth: CGFloat {
+        return self.bounds.width - cornerOffset * 2
+    }
+
+    var gap: CGFloat {
+        return self.bounds.width / CGFloat(dim)
+    }
+
+    var board: Board {
+        return dataSource?.board ?? Board(dimension: 15)
+    }
+
+    var dim: Int {
+        return board.dimension
+    }
+
+    var pieces: [[Piece]] {
+        return board.pieces
+    }
+
+    var cornerOffset: CGFloat {
+        return gap / 2
+    }
+}
+
+protocol BoardViewDelegate: AnyObject {
     func didMouseUpOn(co: Coordinate)
+}
+
+protocol BoardViewDataSource: AnyObject {
+    var board: Board {get}
 }

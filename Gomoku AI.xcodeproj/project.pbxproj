@@ -10,15 +10,13 @@
 		1F60C3622168232C00580C99 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3612168232C00580C99 /* AppDelegate.swift */; };
 		1F60C3642168232C00580C99 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3632168232C00580C99 /* ViewController.swift */; };
 		1F60C3672168232C00580C99 /* Gomoku_AI.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3652168232C00580C99 /* Gomoku_AI.xcdatamodeld */; };
-		1F60C3692168232D00580C99 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F60C3682168232D00580C99 /* Assets.xcassets */; };
-		1F60C36C2168232D00580C99 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F60C36A2168232D00580C99 /* Main.storyboard */; };
 		1F60C3782168232E00580C99 /* Gomoku_AITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3772168232E00580C99 /* Gomoku_AITests.swift */; };
 		1F60C3832168232E00580C99 /* Gomoku_AIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3822168232E00580C99 /* Gomoku_AIUITests.swift */; };
-		1F60C3932168265C00580C99 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3922168265C00580C99 /* BoardView.swift */; };
-		1F60C39F21690DE700580C99 /* BoardWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C39E21690DE700580C99 /* BoardWindowController.swift */; };
-		1F60C3A921692B0900580C99 /* BoardTextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F60C3A821692B0900580C99 /* BoardTextureView.swift */; };
 		1FE063E2216B028E00E07006 /* HeuristicEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FE063E1216B028E00E07006 /* HeuristicEvaluator.swift */; };
 		6E2150459A292C128C8C1C2F /* NegaScout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2159A6F7D5CE226DA5009B /* NegaScout.swift */; };
+		6E2150AE34EA05E1504A8F20 /* BoardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2153AFA38A60D58177C633 /* BoardViewController.swift */; };
+		6E21512ADD9AF93101A57140 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E215A5C7F69D586459F8A9E /* Main.storyboard */; };
+		6E21524FDEEBD78D65639121 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215AAD1367D545EF00667D /* BoardView.swift */; };
 		6E21525423FED2A4D8F6E008 /* Threat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21533CDAF01D52D15E9B1E /* Threat.swift */; };
 		6E21525BCCEA692E9F7BC745 /* MonteCarlo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2156F635C7E699070E71FE /* MonteCarlo.swift */; };
 		6E2152720ACAB9340C4924C0 /* IterativeDeepening.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21512125E86B5D1478A291 /* IterativeDeepening.swift */; };
@@ -30,9 +28,13 @@
 		6E215663E573AAA6A1D0B676 /* Minimax.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21565F5F45684B79A57131 /* Minimax.swift */; };
 		6E21575642C1E8FED637AA8A /* Piece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2154E3FD0ADD3779F2BDDA /* Piece.swift */; };
 		6E2157966E03604E6D7EA0EE /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215C8F9D41F6D65DDD32CF /* Utilities.swift */; };
+		6E2157C020A4A8E12B48BE9E /* ConsoleWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21574A4E106108E1571864 /* ConsoleWindowController.swift */; };
+		6E2157FBD5260860CC2F7554 /* BoardWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21577D5A4B1DB28C46B131 /* BoardWindowController.swift */; };
 		6E21584D6C608E0EFEABF46F /* Evaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215DC82FDD2B6D20C4F7F7 /* Evaluator.swift */; };
+		6E215A0EFC93BBAD4E5104B4 /* BoardTextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2151C0EA9E54D8B98D4970 /* BoardTextureView.swift */; };
 		6E215BAB964B6D893099DB53 /* ZeroSum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21540EB86942A3777C30D4 /* ZeroSum.swift */; };
 		6E215C3F9EDD69F30E97B11C /* Weights.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215E6F8204F4F113F7952D /* Weights.swift */; };
+		6E215C40596E5210302F7C7B /* ConsoleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215DE3109CD72BFA0FAB45 /* ConsoleViewController.swift */; };
 		6E215CFEFF84C8FBC7951707 /* Cortex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2159E426AD6983DFDC04F4 /* Cortex.swift */; };
 		6E215D227A0998D39E54D72F /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215EF01DB438084E7632A3 /* Notification.swift */; };
 		6E215D2BAA686CE83F013B9D /* Zobrist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E215F6FE0F6323C108FDBEA /* Zobrist.swift */; };
@@ -62,8 +64,6 @@
 		1F60C3612168232C00580C99 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1F60C3632168232C00580C99 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		1F60C3662168232C00580C99 /* Gomoku_AI.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Gomoku_AI.xcdatamodel; sourceTree = "<group>"; };
-		1F60C3682168232D00580C99 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1F60C36B2168232D00580C99 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1F60C36D2168232E00580C99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		1F60C3732168232E00580C99 /* Gomoku AITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Gomoku AITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F60C3772168232E00580C99 /* Gomoku_AITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gomoku_AITests.swift; sourceTree = "<group>"; };
@@ -71,14 +71,13 @@
 		1F60C37E2168232E00580C99 /* Gomoku AIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Gomoku AIUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F60C3822168232E00580C99 /* Gomoku_AIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gomoku_AIUITests.swift; sourceTree = "<group>"; };
 		1F60C3842168232E00580C99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1F60C3922168265C00580C99 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
-		1F60C39E21690DE700580C99 /* BoardWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardWindowController.swift; sourceTree = "<group>"; };
-		1F60C3A821692B0900580C99 /* BoardTextureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTextureView.swift; sourceTree = "<group>"; };
 		1F60C3AB21694C7100580C99 /* Gomoku AI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Gomoku AI.entitlements"; sourceTree = "<group>"; };
 		1FE063E1216B028E00E07006 /* HeuristicEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeuristicEvaluator.swift; sourceTree = "<group>"; };
 		6E21512125E86B5D1478A291 /* IterativeDeepening.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IterativeDeepening.swift; path = "Gomoku AI Model/Core/Cortices/IterativeDeepening.swift"; sourceTree = "<group>"; };
+		6E2151C0EA9E54D8B98D4970 /* BoardTextureView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BoardTextureView.swift; path = Interface/Board/BoardTextureView.swift; sourceTree = "<group>"; };
 		6E2151E963D99A73604BE3A9 /* ZeroPlus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZeroPlus.swift; path = "Gomoku AI Model/Core/ZeroPlus.swift"; sourceTree = "<group>"; };
 		6E21533CDAF01D52D15E9B1E /* Threat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Threat.swift; path = "Gomoku AI Model/Core/Threat.swift"; sourceTree = "<group>"; };
+		6E2153AFA38A60D58177C633 /* BoardViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BoardViewController.swift; path = Interface/Board/BoardViewController.swift; sourceTree = "<group>"; };
 		6E21540EB86942A3777C30D4 /* ZeroSum.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZeroSum.swift; path = "Gomoku AI Model/Core/Cortices/ZeroSum.swift"; sourceTree = "<group>"; };
 		6E215456791A6A5CC23EE1E1 /* ZeroMax.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZeroMax.swift; path = "Gomoku AI Model/Core/Cortices/ZeroMax.swift"; sourceTree = "<group>"; };
 		6E2154E3FD0ADD3779F2BDDA /* Piece.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Piece.swift; path = "Gomoku AI Model/Components/Piece.swift"; sourceTree = "<group>"; };
@@ -86,12 +85,17 @@
 		6E2155D770D6CCD4D5F73BA9 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Board.swift; path = "Gomoku AI Model/Components/Board.swift"; sourceTree = "<group>"; };
 		6E21565F5F45684B79A57131 /* Minimax.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Minimax.swift; path = "Gomoku AI Model/Core/Cortices/Minimax.swift"; sourceTree = "<group>"; };
 		6E2156F635C7E699070E71FE /* MonteCarlo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MonteCarlo.swift; path = "Gomoku AI Model/Core/Cortices/MonteCarlo.swift"; sourceTree = "<group>"; };
+		6E21574A4E106108E1571864 /* ConsoleWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConsoleWindowController.swift; path = Interface/Console/ConsoleWindowController.swift; sourceTree = "<group>"; };
+		6E21577D5A4B1DB28C46B131 /* BoardWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BoardWindowController.swift; path = Interface/Board/BoardWindowController.swift; sourceTree = "<group>"; };
+		6E2157C4F71F3CA039EE6059 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Interface/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6E2158F693EE0BE38146445A /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = History.swift; path = "Gomoku AI Model/Components/History.swift"; sourceTree = "<group>"; };
 		6E2159A6F7D5CE226DA5009B /* NegaScout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NegaScout.swift; path = "Gomoku AI Model/Core/Cortices/NegaScout.swift"; sourceTree = "<group>"; };
 		6E2159E426AD6983DFDC04F4 /* Cortex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Cortex.swift; path = "Gomoku AI Model/Core/Cortices/Cortex.swift"; sourceTree = "<group>"; };
 		6E215A54907FCDC7323BA6EA /* Stat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Stat.swift; path = "Gomoku AI Trainer/Stat.swift"; sourceTree = "<group>"; };
+		6E215AAD1367D545EF00667D /* BoardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BoardView.swift; path = Interface/Board/BoardView.swift; sourceTree = "<group>"; };
 		6E215C8F9D41F6D65DDD32CF /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utilities.swift; path = "Gomoku AI Model/Utilities/Utilities.swift"; sourceTree = "<group>"; };
 		6E215DC82FDD2B6D20C4F7F7 /* Evaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Evaluator.swift; path = "Gomoku AI Model/Core/Evaluator.swift"; sourceTree = "<group>"; };
+		6E215DE3109CD72BFA0FAB45 /* ConsoleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConsoleViewController.swift; path = Interface/Console/ConsoleViewController.swift; sourceTree = "<group>"; };
 		6E215E0223C9579C0E0C8B22 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = "Gomoku AI Model/main.swift"; sourceTree = "<group>"; };
 		6E215E6F8204F4F113F7952D /* Weights.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Weights.swift; path = "Gomoku AI Trainer/Weights.swift"; sourceTree = "<group>"; };
 		6E215EF01DB438084E7632A3 /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Notification.swift; path = "Gomoku AI Model/Utilities/Notification.swift"; sourceTree = "<group>"; };
@@ -168,12 +172,14 @@
 			children = (
 				1F60C39B21685C0D00580C99 /* Others */,
 				1F60C3632168232C00580C99 /* ViewController.swift */,
-				1F60C39E21690DE700580C99 /* BoardWindowController.swift */,
-				1F60C3682168232D00580C99 /* Assets.xcassets */,
-				1F60C36A2168232D00580C99 /* Main.storyboard */,
 				1F60C3AA21694A7000580C99 /* Model */,
-				1F60C3922168265C00580C99 /* BoardView.swift */,
-				1F60C3A821692B0900580C99 /* BoardTextureView.swift */,
+				6E215A5C7F69D586459F8A9E /* Main.storyboard */,
+				6E2151C0EA9E54D8B98D4970 /* BoardTextureView.swift */,
+				6E21577D5A4B1DB28C46B131 /* BoardWindowController.swift */,
+				6E215AAD1367D545EF00667D /* BoardView.swift */,
+				6E2153AFA38A60D58177C633 /* BoardViewController.swift */,
+				6E215DE3109CD72BFA0FAB45 /* ConsoleViewController.swift */,
+				6E21574A4E106108E1571864 /* ConsoleWindowController.swift */,
 			);
 			path = "Gomoku AI macOS";
 			sourceTree = "<group>";
@@ -324,8 +330,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F60C3692168232D00580C99 /* Assets.xcassets in Resources */,
-				1F60C36C2168232D00580C99 /* Main.storyboard in Resources */,
+				6E21512ADD9AF93101A57140 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,9 +356,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F60C3642168232C00580C99 /* ViewController.swift in Sources */,
-				1F60C3932168265C00580C99 /* BoardView.swift in Sources */,
-				1F60C39F21690DE700580C99 /* BoardWindowController.swift in Sources */,
-				1F60C3A921692B0900580C99 /* BoardTextureView.swift in Sources */,
 				1FE063E2216B028E00E07006 /* HeuristicEvaluator.swift in Sources */,
 				1F60C3622168232C00580C99 /* AppDelegate.swift in Sources */,
 				1F60C3672168232C00580C99 /* Gomoku_AI.xcdatamodeld in Sources */,
@@ -377,6 +379,12 @@
 				6E215BAB964B6D893099DB53 /* ZeroSum.swift in Sources */,
 				6E215D227A0998D39E54D72F /* Notification.swift in Sources */,
 				6E2157966E03604E6D7EA0EE /* Utilities.swift in Sources */,
+				6E215A0EFC93BBAD4E5104B4 /* BoardTextureView.swift in Sources */,
+				6E2157FBD5260860CC2F7554 /* BoardWindowController.swift in Sources */,
+				6E21524FDEEBD78D65639121 /* BoardView.swift in Sources */,
+				6E2150AE34EA05E1504A8F20 /* BoardViewController.swift in Sources */,
+				6E215C40596E5210302F7C7B /* ConsoleViewController.swift in Sources */,
+				6E2157C020A4A8E12B48BE9E /* ConsoleWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,10 +420,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		1F60C36A2168232D00580C99 /* Main.storyboard */ = {
+		6E215A5C7F69D586459F8A9E /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				1F60C36B2168232D00580C99 /* Base */,
+				6E2157C4F71F3CA039EE6059 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";

@@ -1,21 +1,32 @@
+//
+//  AppDelegate.swift
+//  Gomoku AI
+//  swiftlint:disable cyclomatic_complexity type_body_length file_length
+
 import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-    @IBOutlet weak var boardTextureMenuItem: NSMenuItem!
+    @IBOutlet weak var toggleTexture: NSMenuItem!
 
-    @IBOutlet weak var darkTextureMenuItem: NSMenuItem!
-    @IBOutlet weak var normalTextureMenuItem: NSMenuItem!
-    @IBOutlet weak var lightTextureMenuItem: NSMenuItem!
+    @IBOutlet weak var darkTexture: NSMenuItem!
+    @IBOutlet weak var normalTexture: NSMenuItem!
+    @IBOutlet weak var lightTexture: NSMenuItem!
 
-    @IBOutlet weak var depthMenuItem: NSMenuItem!
-    @IBOutlet weak var breadthMenuItem: NSMenuItem!
+    @IBOutlet weak var depthMI: NSMenuItem!
+    @IBOutlet weak var breadthMI: NSMenuItem!
+
+    @IBOutlet weak var iterativeDeepening: NSMenuItem!
+    @IBOutlet weak var setTimeLimit: NSMenuItem!
+    @IBOutlet weak var maxSearchTime: NSMenuItem!
+
+    var consoleWindowController: ConsoleWindowController?
 
     var textureMenuItems: [NSMenuItem?] {
         return [
-            darkTextureMenuItem,
-            normalTextureMenuItem,
-            lightTextureMenuItem
+            darkTexture,
+            normalTexture,
+            lightTexture
         ]
     }
 
@@ -23,38 +34,61 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return activeController?.board
     }
 
-    var activeController: ViewController? {
-        return NSApplication.shared.mainWindow?.windowController?.contentViewController as? ViewController
+    var activeController: BoardViewController? {
+        return NSApplication.shared.mainWindow?.windowController?.contentViewController as? BoardViewController
     }
 
     var activeWindowController: BoardWindowController? {
         return NSApplication.shared.mainWindow?.windowController as? BoardWindowController
     }
 
-    var windowControllers: [BoardWindowController] {
-        return NSApplication.shared.windows.map{$0.windowController as? BoardWindowController}
-                .filter{$0 != nil}
-                .map{$0!}
+    var activeBoardView: BoardView? {
+        return activeController?.boardView
     }
 
-    var viewControllers: [ViewController] {
-        return windowControllers.map{$0.viewController}
+    var windowControllers: [BoardWindowController] {
+        return NSApplication.shared.windows.map {$0.windowController as? BoardWindowController}
+                .filter {$0 != nil}
+                .map {$0!}
+    }
+
+    var viewControllers: [BoardViewController] {
+        return windowControllers.map {$0.viewController}
     }
 
     @IBAction func zeroPlus(_ sender: NSMenuItem) {
         switch sender.title {
-        case "Black": activeBoard?.zeroAi = .black
+        case "Black": activeBoard?.zeroIdentity = .black
             activeBoard?.requestZeroBrainStorm()
-        case "White": activeBoard?.zeroAi = .white
+        case "White": activeBoard?.zeroIdentity = .white
             activeBoard?.requestZeroBrainStorm()
-        case "Off": activeBoard?.zeroAi = .none
+        case "Off": activeBoard?.zeroIdentity = .none
         default: activeBoard?.triggerZeroBrainstorm()
         }
     }
     @IBAction func toggleStepNumber(_ sender: NSMenuItem) {
-        if let bool = activeController?.boardView.overlayStepNumber {
-            activeController?.boardView.overlayStepNumber = !bool
+        if let b = activeBoardView?.overlayStepNumber {
+            activeBoardView?.overlayStepNumber = !b
         }
+    }
+
+    @IBAction func toggleHighlight(_ sender: NSMenuItem) {
+        if let b = activeBoardView?.highlightLastStep {
+            activeBoardView?.highlightLastStep = !b
+        }
+    }
+    @IBAction func toggleCalcDuration(_ sender: NSMenuItem) {
+        if let b = activeBoardView?.showCalcDuration {
+            activeBoardView?.showCalcDuration = !b
+        }
+    }
+
+    @IBAction func openConsole(_ sender: NSMenuItem) {
+        if consoleWindowController == nil {
+            consoleWindowController = NSStoryboard(name: "Main", bundle: nil)
+                    .instantiateController(withIdentifier: "zero-console") as? ConsoleWindowController
+        }
+        consoleWindowController?.showWindow(self)
     }
 
     @IBAction func zeroVsZero(_ sender: NSMenuItem) {
@@ -66,27 +100,61 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBAction func zeroPlusPersonality(_ sender: NSMenuItem) {
         switch sender.title {
-        case "Heuristic": activeBoard?.zeroPlus.personality = .basic
-        case "Search":
-            let config = zeroPlusSearchConfigDialogue()
+        case "Heuristic": activeBoard?.zeroPlus.personality = .heuristic
+        case "Custom Depth & Breadth":
+            let config = getMinimaxConfig()
             if let personality = config {
                 switch personality {
-                case .search(let depth, let breadth):
-                    depthMenuItem.title = "Depth = \(depth)"
-                    breadthMenuItem.title = "Breadth = \(breadth)"
+                case .minimax(let depth, let breadth):
+                    depthMI.title = "Depth = (depth)"
+                    breadthMI.title = "Breadth = (breadth)"
                 default: break
                 }
                 activeBoard?.zeroPlus.personality = personality
             }
+        case "Monte Carlo":
+            activeBoard?.zeroPlus.personality = .monteCarlo(breadth: 2, rollout: 5, random: true, debug: true)
+        case "Use Default":
+            activeBoard?.zeroPlus.personality = .minimax(depth: 6, breadth: 3)
+        case "Iterative Deepening":
+            if let tmp = activeBoard?.zeroPlus.strategy.iterativeDeepening {
+                activeBoard?.zeroPlus.strategy.iterativeDeepening = !tmp
+                iterativeDeepening.state = tmp ? .off : .on
+            }
+        case "Set Time Limit":
+            let timeLimit = setTimeLimitDialogue()
+            if timeLimit < 0 {return}
+            activeBoard?.zeroPlus.strategy.timeLimit = timeLimit
+            maxSearchTime.title = "Max Search Time: (timeLimit)"
         default: break
         }
     }
 
+    func setTimeLimitDialogue() -> TimeInterval {
+        let msg = NSAlert()
+        msg.addButton(withTitle: "Set")
+        msg.addButton(withTitle: "Cancel")
+        msg.alertStyle = .informational
+        msg.messageText = "Set time limit"
+        msg.window.title = "Set Time Limit"
+        msg.informativeText = "Enter the max thinking time of Zero+ in the field below; the unit is in seconds and decimal values are allowed."
+
+        let box = NSComboBox(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
+        box.addItems(withObjectValues: ["0", "1", "3", "5", "10", "15", "30", "60"])
+        box.placeholderString = "10"
+
+        msg.accessoryView = box
+
+        if msg.runModal() == .alertFirstButtonReturn {
+            return TimeInterval(box.stringValue) ?? TimeInterval(box.placeholderString!)!
+        } else {
+            return -1
+        }
+    }
 
     @IBAction func zeroPlusVisualization(_ sender: NSMenuItem) {
         activeController?.updateVisPref(sender.title)
     }
-
 
     @IBAction func textureSelected(_ sender: NSMenuItem) {
         var texture: NSImage! = nil
@@ -96,16 +164,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         switch sender.title {
         case "Dark":
             texture = NSImage(named: "board_dark")
-            darkTextureMenuItem.state = .on
+            darkTexture.state = .on
         case "Light":
             texture = NSImage(named: "board_light")
-            lightTextureMenuItem.state = .on
+            lightTexture.state = .on
         case "Normal":
             texture = NSImage(named: "board")
-            normalTextureMenuItem.state = .on
+            normalTexture.state = .on
         default: break
         }
-        viewControllers.forEach{$0.boardTextureView.image = texture}
+        viewControllers.forEach {$0.boardTextureView.image = texture}
     }
 
     @IBAction func restart(_ sender: NSMenuItem) {
@@ -125,51 +193,60 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @IBAction func open(_ sender: NSMenuItem) {
-        let panel = NSOpenPanel(contentRect: NSRect.zero,
-                styleMask: .fullSizeContentView,
-                backing: .buffered,
-                defer: true)
-        panel.canChooseDirectories = false
-        panel.allowedFileTypes = ["gzero"]
-        panel.canChooseFiles = true
-        panel.allowsMultipleSelection = true
+        BoardWindowController.open()
+    }
 
-        panel.begin() { response in
-            switch response {
-            case .OK:
-                var curFrame = NSApplication.shared.mainWindow?.frame ?? CGRect.zero
-                for url in panel.urls {
-                    curFrame.origin = CGPoint(x: curFrame.minX + 10, y: curFrame.minY - 10)
-                    let boardWindowController = NSStoryboard(name: "Main", bundle: nil)
-                            .instantiateController(withIdentifier: "board-window") as! BoardWindowController
-                    do {
-                        let game = try String(contentsOf: url, encoding: .utf8)
-                        let fileName = url.lastPathComponent
-                        let idx = fileName.firstIndex(of: ".")!
-                        boardWindowController.fileName = String(fileName[..<idx]) // Update the name of the window
-                        boardWindowController.board.load(game)
-                        boardWindowController.showWindow(self)
-                        if curFrame.size == .zero {
-                            curFrame = boardWindowController.window!.frame
-                        } else {
-                            boardWindowController.window?.setFrame(curFrame, display: true, animate: true)
-                        }
-                    } catch let err {
-                        print(err)
-                    }
-                }
-            default: break
+    @IBAction func copyToClipboard(_ sender: NSMenuItem) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
+        if let pieces = activeBoard?.pieces {
+            pasteboard.setString(Zobrist(matrix: pieces).description, forType: .string)
+        }
+    }
+
+    @IBAction func paste(_ sender: Any) {
+        let pasteboard = NSPasteboard.general
+        var clipboardItems: [String] = []
+        for element in pasteboard.pasteboardItems! {
+            if let str = element.string(forType: .string) {
+                clipboardItems.append(str)
             }
+        }
+
+        // Access the item in the clipboard
+        let boardStr = clipboardItems[0]
+        let rows = boardStr.split(separator: "
+        ")
+        activeBoard?.dimension = rows.count
+        activeBoard?.clear()
+
+        // Update board
+        var player: Piece = .black
+        rows.enumerated().forEach { (r, row) in
+            row.split(separator: " ").enumerated().forEach { (c, p) in
+                if let piece = Piece(rawValue: String(p)) {
+                    activeBoard?.set((c, r), piece)
+                    if piece == .none {
+                        return
+                    }
+                    player = player.next()
+                }
+            }
+        }
+        activeBoard?.curPlayer = player
+
+        // Update display
+        if let pieces = activeBoard?.pieces {
+            activeBoard?.delegate?.boardDidUpdate(pieces: pieces)
         }
     }
 
     @IBAction func new(_ sender: NSMenuItem) {
-        let dim = newGameDialogue()
+        let dim = getNewGameDimension()
         if dim != -1 {
             let boardWindowController = NSStoryboard(name: "Main", bundle: nil)
                     .instantiateController(withIdentifier: "board-window") as! BoardWindowController
             boardWindowController.board.dimension = dim
-            boardWindowController.fileName = boardWindowController.fileName + "" // Trigger window title update
             boardWindowController.showWindow(self)
             if let frame = activeWindowController?.window?.frame { // There's an insignificant bug here...
                 let newFrame = CGRect(x: frame.minX + 10, y: frame.minY - 10, width: frame.width, height: frame.height)
@@ -178,7 +255,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    func zeroPlusSearchConfigDialogue() -> Personality? {
+    private func getMinimaxConfig() -> Personality? {
         let msg = NSAlert()
         msg.addButton(withTitle: "Ok")
         msg.addButton(withTitle: "Cancel")
@@ -191,7 +268,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let depthLabel = NSTextField(frame: NSRect(x: 0, y: 24, width: 300, height: 24))
         depthLabel.textColor = NSColor.systemGray
-        depthLabel.stringValue = "Depth\t\t\t\t   Breadth"
+        depthLabel.stringValue = "Depth				   Breadth"
         depthLabel.isBezeled = false
         depthLabel.drawsBackground = false
         depthLabel.isEditable = false
@@ -199,29 +276,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         accView.addSubview(depthLabel)
 
         let depthBox = NSComboBox(frame: NSRect(x: 0, y: 0, width: 100, height: 24))
-        depthBox.addItems(withObjectValues: [3,4,5,6,7,8,9,10])
+        depthBox.addItems(withObjectValues: [3, 4, 5, 6, 7, 8, 9, 10])
         depthBox.placeholderString = "7"
         accView.addSubview(depthBox)
 
         let breadthBox = NSComboBox(frame: NSRect(x: 150, y: 0, width: 100, height: 24))
-        breadthBox.addItems(withObjectValues: [2,3,4,5])
+        breadthBox.addItems(withObjectValues: [2, 3, 4, 5])
         breadthBox.placeholderString = "3"
         accView.addSubview(breadthBox)
 
         msg.accessoryView?.addSubview(accView)
         msg.accessoryView = accView
-        let response = msg.runModal()
 
-        if (response == .alertFirstButtonReturn) {
+        if msg.runModal() == .alertFirstButtonReturn {
             let d = Int(depthBox.stringValue) ?? Int(depthBox.placeholderString!)!
             let b = Int(breadthBox.stringValue) ?? Int(breadthBox.placeholderString!)!
-            return Personality.search(depth: d, breadth: b)
+            return Personality.minimax(depth: d, breadth: b)
         } else {
             return nil
         }
     }
 
-    func newGameDialogue() -> Int {
+    private func getNewGameDimension() -> Int {
         let msg = NSAlert()
         msg.addButton(withTitle: "Create")
         msg.addButton(withTitle: "Cancel")
@@ -231,13 +307,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         msg.informativeText = "* board dimension must be between between 10 and 19"
 
         let box = NSComboBox(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
-        box.addItems(withObjectValues: ["15 x 15","19 x 19"])
+        box.addItems(withObjectValues: ["15 x 15", "19 x 19"])
         box.placeholderString = "19 x 19"
 
         msg.accessoryView = box
         let response = msg.runModal()
 
-        if (response == .alertFirstButtonReturn) {
+        if response == .alertFirstButtonReturn {
             let dimStr = box.stringValue
             if dimStr == "" { return 19 } else {
                 let idx = box.stringValue.firstIndex(of: "x")
@@ -245,7 +321,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     return Int(dimStr) ?? -1
                 }
                 var num = String(dimStr[..<idx!])
-                num.removeAll{$0 == " "} // Remove spaces
+                num.removeAll {$0 == " "} // Remove spaces
                 return Int(num) ?? -1
             }
         } else {
@@ -253,25 +329,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-
     @IBAction func boardTexture(_ sender: NSMenuItem) {
         if let controller = activeController {
             let bool = controller.boardTextureView.isHidden
-            viewControllers.forEach{$0.boardTextureView.isHidden = !bool}
-            boardTextureMenuItem.title = bool ? "Hide Board Texture" : "Show Board Texture"
+            viewControllers.forEach {$0.boardTextureView.isHidden = !bool}
+            toggleTexture.title = bool ? "Hide Board Texture" : "Show Board Texture"
         }
     }
-
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         if let controller = activeController {
-            boardTextureMenuItem.title = controller.boardTextureView.isHidden ?
+            toggleTexture.title = controller.boardTextureView.isHidden ?
                     "Show Board Texture" : "Hide Board Texture"
-            switch activeBoard!.zeroPlus.personality {
-            case .search(let depth, let breadth):
-                depthMenuItem.title = "Depth = \(depth)"
-                breadthMenuItem.title = "Breadth = \(breadth)"
+            let zeroPlus = activeBoard!.zeroPlus
+            switch zeroPlus.personality {
+            case .minimax(let depth, let breadth):
+                depthMI.title = "Depth = (depth)"
+                breadthMI.title = "Breadth = (breadth)"
+                iterativeDeepening.state = zeroPlus.strategy.iterativeDeepening ? .on : .off
             default: break
             }
         }
@@ -282,6 +358,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - Core Data stack
+
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -290,7 +367,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
          error conditions that could cause the creation of the store to fail.
         */
         let container = NSPersistentContainer(name: "Gomoku_AI")
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores(completionHandler: { (_, error) in
             if let error = error {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -303,19 +380,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                  * The store could not be migrated to the current model version.
                  Check the error message to determine what the actual problem was.
                  */
-                fatalError("Unresolved error \(error)")
+                fatalError("Unresolved error (error)")
             }
         })
         return container
     }()
 
     // MARK: - Core Data Saving and Undo support
+
     @IBAction func saveAction(_ sender: AnyObject?) {
         // Performs the save action for the application, which is to send the save: message to the application's managed object context. Any encountered errors are presented to the user.
         let context = persistentContainer.viewContext
 
         if !context.commitEditing() {
-            NSLog("\(NSStringFromClass(type(of: self))) unable to commit editing before saving")
+            NSLog("(NSStringFromClass(type(of: self))) unable to commit editing before saving")
         }
         if context.hasChanges {
             do {
@@ -338,7 +416,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let context = persistentContainer.viewContext
 
         if !context.commitEditing() {
-            NSLog("\(NSStringFromClass(type(of: self))) unable to commit editing to terminate")
+            NSLog("(NSStringFromClass(type(of: self))) unable to commit editing to terminate")
             return .terminateCancel
         }
 
@@ -351,14 +429,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } catch {
             let nserror = error as NSError
 
-            // Customize this code block to include application-specific recovery steps.
-            let result = sender.presentError(nserror)
-            if (result) {
+            if sender.presentError(nserror) {
                 return .terminateCancel
             }
 
             let question = NSLocalizedString("Could not save changes while quitting. Quit anyway?", comment: "Quit without saves error question message")
-            let info = NSLocalizedString("Quitting now will lose any changes you have made since the last successful save", comment: "Quit without saves error question info");
+            let info = NSLocalizedString("Quitting now will lose any changes you have made since the last successful save", comment: "Quit without saves error question info")
             let quitButton = NSLocalizedString("Quit anyway", comment: "Quit anyway button title")
             let cancelButton = NSLocalizedString("Cancel", comment: "Cancel button title")
             let alert = NSAlert()

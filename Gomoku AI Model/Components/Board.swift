@@ -350,7 +350,7 @@ extension Board: CustomStringConvertible {
 protocol BoardDelegate: AnyObject {
     func boardDidUpdate(pieces: [[Piece]])
     func gameHasEnded(winner: Piece, coordinates: [Coordinate], popDialogue: Bool)
-}git
+}
 
 func isValid(_ co: Coordinate, _ dim: Int) -> Bool {
     return co.col >= 0 && co.row >= 0 && co.row < dim && co.col < dim

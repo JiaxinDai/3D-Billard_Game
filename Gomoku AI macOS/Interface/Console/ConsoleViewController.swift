@@ -100,7 +100,7 @@ class ConsoleViewController: NSViewController {
         // Configure Zobrist
         Zobrist.strictEqualityCheck = strictEqualityCheck.state == .on
 
-        // Configure Zero+ AI
+        // Configure Gomoku AI
         let zero1 = ZeroPlus(), zero2 = ZeroPlus()
         zero1.identity = .black
         zero1.visDelegate = vc

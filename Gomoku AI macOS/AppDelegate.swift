@@ -140,7 +140,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         msg.alertStyle = .informational
         msg.messageText = "Set time limit"
         msg.window.title = "Set Time Limit"
-        msg.informativeText = "Enter the max thinking time of Zero+ in the field below; the unit is in seconds and decimal values are allowed."
+        msg.informativeText = "Enter the max thinking time of Gomoku AI in the field below; the unit is in seconds and decimal values are allowed."
 
         let box = NSComboBox(frame: NSRect(x: 0, y: 0, width: 300, height: 24))
         box.addItems(withObjectValues: ["0", "1", "3", "5", "10", "15", "30", "60"])

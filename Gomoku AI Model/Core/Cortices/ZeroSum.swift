@@ -1,3 +1,11 @@
+//
+//  ZeroSum.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/28/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
+
 import Foundation
 /// A simple heuristic based on the principle of zero-sum games
 class ZeroSumCortex: BasicCortex {

@@ -1,3 +1,11 @@
+//
+//  ViewController.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/5/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
+
 import Cocoa
 
 class BoardViewController: NSViewController, BoardViewDataSource {

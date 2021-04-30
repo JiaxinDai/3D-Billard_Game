@@ -1,3 +1,11 @@
+//
+//  BoardWindowController.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/6/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
+
 import Cocoa
 
 class BoardWindowController: NSWindowController, NSOpenSavePanelDelegate, ViewControllerDelegate {
@@ -22,7 +30,7 @@ class BoardWindowController: NSWindowController, NSOpenSavePanelDelegate, ViewCo
     var fileName = "New Game" {
         didSet {
             let dim = board.dimension
-            window?.title = "(fileName)	(dim) x (dim)"
+            window?.title = "\(fileName)\t\(dim) x \(dim)"
         }
     }
 
@@ -90,7 +98,7 @@ class BoardWindowController: NSWindowController, NSOpenSavePanelDelegate, ViewCo
 
     func panel(_ sender: Any, validate url: URL) throws {
         do {
-            print("Saving to (url)")
+            print("Saving to \(url)")
             let game = board.serialize()
             try game.write(to: url, atomically: true, encoding: .utf8)
         } catch let err {

@@ -1,6 +1,9 @@
 //
 //  AppDelegate.swift
 //  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/5/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
 //  swiftlint:disable cyclomatic_complexity type_body_length file_length
 
 import Cocoa
@@ -106,8 +109,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if let personality = config {
                 switch personality {
                 case .minimax(let depth, let breadth):
-                    depthMI.title = "Depth = (depth)"
-                    breadthMI.title = "Breadth = (breadth)"
+                    depthMI.title = "Depth = \(depth)"
+                    breadthMI.title = "Breadth = \(breadth)"
                 default: break
                 }
                 activeBoard?.zeroPlus.personality = personality
@@ -125,7 +128,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let timeLimit = setTimeLimitDialogue()
             if timeLimit < 0 {return}
             activeBoard?.zeroPlus.strategy.timeLimit = timeLimit
-            maxSearchTime.title = "Max Search Time: (timeLimit)"
+            maxSearchTime.title = "Max Search Time: \(timeLimit)"
         default: break
         }
     }
@@ -215,8 +218,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Access the item in the clipboard
         let boardStr = clipboardItems[0]
-        let rows = boardStr.split(separator: "
-        ")
+        let rows = boardStr.split(separator: "\n")
         activeBoard?.dimension = rows.count
         activeBoard?.clear()
 
@@ -268,7 +270,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let depthLabel = NSTextField(frame: NSRect(x: 0, y: 24, width: 300, height: 24))
         depthLabel.textColor = NSColor.systemGray
-        depthLabel.stringValue = "Depth				   Breadth"
+        depthLabel.stringValue = "Depth\t\t\t\t   Breadth"
         depthLabel.isBezeled = false
         depthLabel.drawsBackground = false
         depthLabel.isEditable = false
@@ -345,8 +347,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let zeroPlus = activeBoard!.zeroPlus
             switch zeroPlus.personality {
             case .minimax(let depth, let breadth):
-                depthMI.title = "Depth = (depth)"
-                breadthMI.title = "Breadth = (breadth)"
+                depthMI.title = "Depth = \(depth)"
+                breadthMI.title = "Breadth = \(breadth)"
                 iterativeDeepening.state = zeroPlus.strategy.iterativeDeepening ? .on : .off
             default: break
             }
@@ -380,7 +382,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                  * The store could not be migrated to the current model version.
                  Check the error message to determine what the actual problem was.
                  */
-                fatalError("Unresolved error (error)")
+                fatalError("Unresolved error \(error)")
             }
         })
         return container
@@ -393,7 +395,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let context = persistentContainer.viewContext
 
         if !context.commitEditing() {
-            NSLog("(NSStringFromClass(type(of: self))) unable to commit editing before saving")
+            NSLog("\(NSStringFromClass(type(of: self))) unable to commit editing before saving")
         }
         if context.hasChanges {
             do {
@@ -416,7 +418,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let context = persistentContainer.viewContext
 
         if !context.commitEditing() {
-            NSLog("(NSStringFromClass(type(of: self))) unable to commit editing to terminate")
+            NSLog("\(NSStringFromClass(type(of: self))) unable to commit editing to terminate")
             return .terminateCancel
         }
 

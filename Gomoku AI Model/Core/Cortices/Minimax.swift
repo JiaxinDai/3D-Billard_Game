@@ -1,3 +1,11 @@
+//
+//  Minimax.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/20/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
+
 import Foundation
 
 //    function minimax(node, depth, maximizingPlayer)
@@ -27,28 +35,28 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
     var cumCutDepth = 0
     var nodes = 0
     var verbose = false
-
+    
     typealias Result = (move: Move, depth: Int)
     typealias TransposMap = [Zobrist: Result]
     var transposMap = TransposMap()
-
+    
     init(_ delegate: CortexDelegate, depth: Int, breadth: Int) {
         self.depth = depth
         self.breadth = breadth
         super.init(delegate)
     }
-
+    
     override func getMove() -> Move {
         transposMap = TransposMap()
         let move = minimax(depth, identity, Int.min, Int.max)
         if verbose {
             let avgCutDepth = Double(cumCutDepth) / Double(alphaCut + betaCut)
-            print("alpha cut: (alphaCut)	 beta cut: (betaCut)	 avg. cut depth: (avgCutDepth)")
-            print("recognized sequences: (evaluator.seqHashMap.count)")
-            print("calc. duration (s): (delegate.duration)")
-            print("nodes explored: (nodes)")
+            print("alpha cut: \(alphaCut)\t beta cut: \(betaCut)\t avg. cut depth: \(avgCutDepth)")
+            print("recognized sequences: \(evaluator.seqHashMap.count)")
+            print("calc. duration (s): \(delegate.duration)")
+            print("nodes explored: \(nodes)")
         }
-
+        
         if let mv = move {
             return mv
         }
@@ -56,11 +64,11 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
         print("generating basic move...")
         return BasicCortex(delegate).getMove()
     }
-
+    
     func isTerminal(score: Int) -> Bool {
         return score >= Evaluator.win || score <= -Evaluator.win
     }
-
+    
     /**
      In plain minimax, the heuristic value of leaf node is the horizon; Because of this,
      the algorithm is short sighted and is unable to foresee drastic changes beyond the horizon.
@@ -69,7 +77,7 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
     func beyondHorizon(_ score: Int, _ alpha: Int, _ beta: Int, _ player: Piece) -> Int {
         return score
     }
-
+    
     /**
      - Returns: a list of candidates [Move] arranged in order of greatest threat potential to
                 least threat potential. For standard minimax, it uses the basic method built
@@ -78,11 +86,11 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
     func getCandidates() -> [Move] {
         return Array(getSortedMoves().prefix(breadth))
     }
-
+    
     /**
      Plain old minimax algorithm with alpha beta pruning.
      Empty implementation for beyondHorizon(_:) - does not attempt to address horizon effect.
-
+     
      - Returns: the best move for the current player in the given delegate.
      */
     func minimax(_ depth: Int, _ player: Piece, _ alpha: Int, _ beta: Int) -> Move? {
@@ -92,12 +100,12 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
                 return mv
             }
         }
-
+        
         var score = getHeuristicValue()
         if delegate.strategy.randomizedSelection {
             score += Int.random(in: 0..<10)
         }
-
+        
         if isTerminal(score: score) {
             // Terminal state has reached
             return Move(co: (0, 0), score: score)
@@ -106,7 +114,7 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
             move.score = beyondHorizon(score, alpha, beta, player)
             return move
         }
-
+        
         let candidates = getCandidates()
         if candidates.count == 0 {
             return nil
@@ -117,7 +125,7 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
             return minimize(candidates, depth, player, alpha, beta)
         }
     }
-
+    
     /// Maximizing player
     private func maximize(_ candidates: [Move], _ depth: Int, _ player: Piece, _ alpha: Int, _ beta: Int) -> Move? {
         var alpha = alpha, beta = beta // Make alpha beta mutable
@@ -133,7 +141,7 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
                     if s >= Evaluator.win {
                         break
                     }
-
+                    
                     alpha = max(alpha, s)
                     if beta <= alpha {
                         bestMove!.score = alpha
@@ -143,14 +151,14 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
                     }
                 }
             }
-
+            
             // If time's up, return the current best move.
             if delegate.timeout {
                 searchCancelledInProgress = true
                 break
             }
         }
-
+        
         if var move = bestMove {
             // No defense measurements can dodge enemy's attack.
             // Losing is inevitable.
@@ -159,14 +167,14 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
                 let mv = getSortedMoves().sorted {$0.score > $1.score}[0]
                 move.co = mv.co
             }
-
+            
             transposMap[Zobrist(zobrist: zobrist)] = (move: move, depth: depth)
             return move
         }
-
+        
         return nil
     }
-
+    
     /// Minimizing player
     private func minimize(_ candidates: [Move], _ depth: Int, _ player: Piece, _ alpha: Int, _ beta: Int) -> Move? {
         var alpha = alpha, beta = beta // Make alpha beta mutable
@@ -193,7 +201,7 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
                     if s <= -Evaluator.win {
                         break
                     }
-
+                    
                     beta = min(beta, s)
                     if beta <= alpha {
                         bestMove!.score = beta
@@ -212,11 +220,11 @@ class MinimaxCortex: BasicCortex, TimeLimitedSearchProtocol {
             transposMap[Zobrist(zobrist: zobrist)] = (move: move, depth: depth)
             return move
         }
-
+        
         return nil
     }
-
+    
     override var description: String {
-        return "Minimax(depth: (depth), breadth: (breadth))"
+        return "Minimax(depth: \(depth), breadth: \(breadth))"
     }
 }

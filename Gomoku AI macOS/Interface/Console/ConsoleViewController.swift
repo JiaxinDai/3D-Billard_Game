@@ -1,3 +1,11 @@
+//
+//  ConsoleViewController.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/21/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//  swiftlint:disable cyclomatic_complexity type_body_length
+
 import Cocoa
 
 class ConsoleViewController: NSViewController {
@@ -209,7 +217,7 @@ class ConsoleViewController: NSViewController {
                 let game = try String(contentsOf: url, encoding: .utf8)
                 var fileName = url.lastPathComponent
                 fileName = String(fileName[..<fileName.lastIndex(of: ".")!]) // Remove extension
-                print("analyzing (idx + 1) of (total), (fileName)")
+                print("analyzing \(idx + 1) of \(total), \(fileName)")
                 let board = Board(dimension: 19)
                 board.load(game)
                 let numSteps = board.history.stack.count
@@ -269,36 +277,24 @@ class ConsoleViewController: NSViewController {
         let bAvgSteps = avg(blackWinSteps)
         let wAvgSteps = avg(whiteWinSteps)
 
-        let stats = "total:		(total)
-        "
-                + "black wins:	(blackWin)	 - (blackWinRatio)%
-        "
-                + "white wins:	(whiteWin)	 - (whiteWinRatio)%
-        "
-                + "draws:		(draw)	 - (drawRatio)%
-        "
-                + "avg. # of steps: (avgSteps)
-        "
-                + "black win steps: (bAvgSteps)
-        "
-                + "white win steps: (wAvgSteps)
-        "
-                + "incomplete: (incomplete) (excluded from total)
-        "
-                + "repeated: (repeated)
-        "
-                + "repeated black wins: (repeatedBWin)
-        "
-                + "repeated white wins: (repeatedWWin)
-        "
-                + "repeated draw      : (repeatedDraw)
-        "
+        let stats = "total:\t\t\(total)\n"
+                + "black wins:\t\(blackWin)\t - \(blackWinRatio)%\n"
+                + "white wins:\t\(whiteWin)\t - \(whiteWinRatio)%\n"
+                + "draws:\t\t\(draw)\t - \(drawRatio)%\n"
+                + "avg. # of steps: \(avgSteps)\n"
+                + "black win steps: \(bAvgSteps)\n"
+                + "white win steps: \(wAvgSteps)\n"
+                + "incomplete: \(incomplete) (excluded from total)\n"
+                + "repeated: \(repeated)\n"
+                + "repeated black wins: \(repeatedBWin)\n"
+                + "repeated white wins: \(repeatedWWin)\n"
+                + "repeated draw      : \(repeatedDraw)\n"
 
         var dir = urls[0].deletingLastPathComponent()
         dir.appendPathComponent("stats.txt")
         print(stats)
         do {
-            print("writing to (dir)")
+            print("writing to \(dir)")
             try stats.write(to: dir, atomically: true, encoding: .utf8)
         } catch let err {
             print(err)

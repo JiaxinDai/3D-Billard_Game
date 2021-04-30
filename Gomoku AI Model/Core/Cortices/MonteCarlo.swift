@@ -1,3 +1,10 @@
+//
+//  MonteCarlo.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/20/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
 import Foundation
 
 class MonteCarloCortex: BasicCortex {
@@ -30,31 +37,27 @@ class MonteCarloCortex: BasicCortex {
         let rootNode = Node(identity: delegate.curPlayer, co: (0, 0))
         iterations = 0
         while !delegate.timeout {
-            dPrint("begin	------------------------------------------------")
-            dPrint(">> initial root node:
-            (rootNode)")
+            dPrint("begin\t------------------------------------------------")
+            dPrint(">> initial root node: \n\(rootNode)")
             let node = rootNode.select()
-            dPrint(">> selected node:
-            (node)")
+            dPrint(">> selected node: \n\(node)")
             let stackTrace = node.stackTrace()
             var count = 0
             for node in stackTrace {
                 delegate.put(at: node.coordinate!)
                 count += 1
             }
-            print("level: (count), iterations: (iterations)")
+            print("level: \(count), iterations: \(iterations)")
             let newNode = node.expand(self, breadth)
-            dPrint(">> expanded node:
-            (newNode)")
+            dPrint(">> expanded node: \n\(newNode)")
             let score = rollout(depth: simDepth, node: newNode)
-            dPrint(">> playout score: (score)")
+            dPrint(">> playout score: \(score)")
             newNode.backpropagate(score)
             revert(num: stackTrace.count)
             iterations += 1
-            dPrint(">> iterations completed: (iterations)")
-            dPrint(">> root node:
-            (rootNode)")
-            dPrint("end	------------------------------------------------")
+            dPrint(">> iterations completed: \(iterations)")
+            dPrint(">> root node: \n\(rootNode)")
+            dPrint("end\t------------------------------------------------")
         }
 
         var bestNode: Node?
@@ -62,7 +65,7 @@ class MonteCarloCortex: BasicCortex {
             if bestNode == nil {
                 bestNode = node
             } else if node.numVisits > bestNode!.numVisits {
-                print("avg. Score: (node.avgScore), visits: (node.numVisits), co: (node.coordinate!)")
+                print("avg. Score: \(node.avgScore), visits: \(node.numVisits), co: \(node.coordinate!)")
                 bestNode = node
             }
         }
@@ -84,7 +87,7 @@ class MonteCarloCortex: BasicCortex {
             let move = cortex.getMove()
             delegate.put(at: move.co)
             if let winner = hasWinner() {
-                //                print("simulated winner: (winner)	 sim. depth = (i)")
+                //                print("simulated winner: \(winner)\t sim. depth = \(i)")
                 //                print(delegate.zobrist)
                 revert(num: i + 2)
                 return winner == .black ? Evaluator.win : -Evaluator.win
@@ -214,23 +217,22 @@ class MonteCarloCortex: BasicCortex {
     }
 
     override var description: String {
-        return "MonteCarlo(breadth: (breadth), randExp: (randomExpansion), simDepth: (simDepth)) <-> (cortex)"
+        return "MonteCarlo(breadth: \(breadth), randExp: \(randomExpansion), simDepth: \(simDepth)) <-> \(cortex)"
     }
 
 }
 
 extension MonteCarloCortex.Node: CustomStringConvertible {
     var description: String {
-        let coStr = coordinate == nil ? "nil" : "(coordinate!)"
-        let this = "avg_score: (avgScore)	visits: (numVisits)	identity: (identity)	co: (coStr)	children: (children.count)"
+        let coStr = coordinate == nil ? "nil" : "\(coordinate!)"
+        let this = "avg_score: \(avgScore)\tvisits: \(numVisits)\tidentity: \(identity)\tco: \(coStr)\tchildren: \(children.count)"
         return self.children.map {$0.description}
-                .reduce(this) {"($0)
-                    (indentation)($1)"}
-                }
-
-        private var indentation: String {
-            return (0...stackTrace().count)
-                    .map {_ in "	"}
-                    .reduce("", +)
-        }
+                .reduce(this) {"\($0)\n\(indentation)\($1)"}
     }
+
+    private var indentation: String {
+        return (0...stackTrace().count)
+                .map {_ in "\t"}
+                .reduce("", +)
+    }
+}

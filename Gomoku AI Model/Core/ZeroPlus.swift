@@ -1,3 +1,11 @@
+//
+//  ZeroPlus.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/6/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
+
 import Foundation
 
 typealias Move = (co: Coordinate, score: Int)
@@ -80,10 +88,7 @@ class ZeroPlus: CortexDelegate, EvaluatorDataSource {
 
         if verbose {
             let avgDuration = calcDurations.reduce(0) {$0 + $1} / Double(calcDurations.count)
-            print("cortex: (String(describing: cortex))
-            duration: (duration)
-            avg. duration: (avgDuration)
-            ")
+            print("cortex: \(String(describing: cortex))\nduration: \(duration)\navg. duration: \(avgDuration)\n")
         }
         visDelegate?.activeMapUpdated(activeMap: nil) // Erase drawings of active map
     }
@@ -128,7 +133,7 @@ class ZeroPlus: CortexDelegate, EvaluatorDataSource {
         }
         let move = cortex.getMove()
         if verbose {
-            print("move: (move)")
+            print("move: \(move)")
         }
 
         delegate.bestMoveExtrapolated(co: move.co)

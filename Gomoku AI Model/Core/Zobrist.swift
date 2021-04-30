@@ -1,3 +1,11 @@
+//
+//  ZobristBoard.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/8/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
+
 import Foundation
 
 typealias ZobristTable = [[[Int]]]
@@ -164,8 +172,7 @@ extension Zobrist: CustomStringConvertible {
                 case .white: str += "o "
                 }
             }
-            str += "
-            "
+            str += "\n"
         }
         return str
     }

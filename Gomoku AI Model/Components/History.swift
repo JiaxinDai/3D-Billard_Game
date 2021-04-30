@@ -1,3 +1,11 @@
+//
+//  History.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/5/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
+
 import Foundation
 
 class History {
@@ -43,8 +51,8 @@ class History {
      col,row;col,row;col,row...
      */
     func serialize() -> String {
-        var str =  stack.map {"($0.col),($0.row)"}
-                .reduce("") {"($0);($1)"}
+        var str =  stack.map {"\($0.col),\($0.row)"}
+                .reduce("") {"\($0);\($1)"}
         str.removeFirst()
         return str
     }

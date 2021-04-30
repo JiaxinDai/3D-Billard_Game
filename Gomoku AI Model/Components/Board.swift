@@ -1,3 +1,11 @@
+//
+//  Board.swift
+//  Gomoku AI
+//
+//  Created by Jiaxin Dai on 10/5/18.
+//  Copyright © 2018 Jiaxin Dai. All rights reserved.
+//
+
 import Foundation
 
 class Board: ZeroPlusDelegate {
@@ -8,16 +16,16 @@ class Board: ZeroPlusDelegate {
             }
         }
     }
-
+    
     var cortex: CortexProtocol {
         return zeroPlus.cortex
     }
-
+    
     // The arrangement of pieces on the board. A 2D array.
     var pieces = [[Piece]]()
     weak var delegate: BoardDelegate?
     var history = History()
-
+    
     var curPlayer: Piece = .black
     var zeroIdentity: Piece = .none
     var zeroPlus = ZeroPlus() {
@@ -25,14 +33,14 @@ class Board: ZeroPlusDelegate {
             zeroPlus.delegate = self
         }
     }
-
+    
     // Secondary AI for skirmish, don't forget to set the delegate!
     var zeroPlus2: ZeroPlus? {
         didSet {
             zeroPlus2?.delegate = self
         }
     }
-
+    
     var zeroXzero = false {
         didSet {
             cancel()
@@ -60,13 +68,13 @@ class Board: ZeroPlusDelegate {
     let zeroActivityQueue = DispatchQueue(label: "zeroPlus", attributes: .concurrent)
     var zeroWorkItem: DispatchWorkItem?
     var zero2WorkItem: DispatchWorkItem?
-
+    
     init(dimension: Int) {
         self.dimension = dimension
         zeroPlus.delegate = self
         restart()
     }
-
+    
     func clear() {
         cancel()
         pieces = [[Piece]](repeating: Array(repeatElement(Piece.none, count: dimension)), count: dimension)
@@ -74,18 +82,18 @@ class Board: ZeroPlusDelegate {
         history = History()
         gameHasEnded = false
     }
-
+    
     func cancel() {
         zeroWorkItem?.cancel()
         zero2WorkItem?.cancel()
     }
-
+    
     func restart() {
         clear()
         requestZeroBrainStorm()
         delegate?.boardDidUpdate(pieces: pieces)
     }
-
+    
     func spawnPseudoPieces() {
         clear()
         for row in 0..<dimension {
@@ -95,7 +103,7 @@ class Board: ZeroPlusDelegate {
         }
         delegate?.boardDidUpdate(pieces: pieces)
     }
-
+    
     /**
      Redo last move
      */
@@ -107,7 +115,7 @@ class Board: ZeroPlusDelegate {
             delegate?.boardDidUpdate(pieces: pieces)
         }
     }
-
+    
     /**
      Undo last move
      */
@@ -120,14 +128,14 @@ class Board: ZeroPlusDelegate {
             delegate?.boardDidUpdate(pieces: pieces)
         }
     }
-
+    
     /**
      Override the piece at the given coordinate with the supplied piece by force
      */
     func set(_ co: Coordinate, _ piece: Piece) {
         pieces[co.row][co.col] = piece
     }
-
+    
     func put(at co: Coordinate) {
         if zeroIsThinking || gameHasEnded {
             return
@@ -138,7 +146,7 @@ class Board: ZeroPlusDelegate {
         set(co, curPlayer)
         history.push(co)
         delegate?.boardDidUpdate(pieces: pieces)
-
+        
         if let winner = hasWinner() {
             gameHasEnded = true
             let cos = findWinningCoordinates()
@@ -150,39 +158,38 @@ class Board: ZeroPlusDelegate {
                     self.restart()
                 }
             }
-
+            
             delegate?.gameHasEnded(winner: winner, coordinates: cos, popDialogue: !looped)
         }
-
+        
         curPlayer = curPlayer.next()
         requestZeroBrainStorm()
     }
-
+    
     func log(_ winner: Piece) {
-        var fileName = "battle_(battles)_"
+        var fileName = "battle_\(battles)_"
         let steps = history.stack.count
         switch winner {
         case .none: fileName += "draw"
-        case .black: fileName += "b_wins_@step=(steps)"
-        case .white: fileName += "w_wins_@step=(steps)"
+        case .black: fileName += "b_wins_@step=\(steps)"
+        case .white: fileName += "w_wins_@step=\(steps)"
         }
         let timeElapsed = Date().timeIntervalSince1970 - gameStartTime
-        fileName += "_t=(timeElapsed)s"
+        fileName += "_t=\(timeElapsed)s"
         fileName += ".gzero"
         let url = URL(fileURLWithPath: saveDir).appendingPathComponent(fileName)
         do {
-            print("battle # (battles), (winner) wins @ step = (steps)")
-            print("time elapsed: (timeElapsed)")
-            print("board:
-            (Zobrist(matrix: pieces))")
-            print("saving to (url)")
+            print("battle # \(battles), \(winner) wins @ step = \(steps)")
+            print("time elapsed: \(timeElapsed)")
+            print("board: \n\(Zobrist(matrix: pieces))")
+            print("saving to \(url)")
             try serialize().write(to: url, atomically: true, encoding: .utf8)
         } catch let err {
             print(err)
         }
         battles += 1
     }
-
+    
     func hasWinner() -> Piece? {
         if history.stack.count == 0 {
             return nil
@@ -192,15 +199,15 @@ class Board: ZeroPlusDelegate {
         }
         zeroPlus.zobrist = Zobrist(matrix: pieces)
         let score = cortex.threatCoupledHeuristic()
-
+        
         if abs(score) >= Evaluator.win {
             return score > 0 ? .black : .white
         }
-
+        
         // Game is still in progress
         return nil
     }
-
+    
     /**
      Find the coordinates of winning pieces
      */
@@ -210,7 +217,7 @@ class Board: ZeroPlusDelegate {
         let color = pieces[row][col]
         (-4...0).forEach {
             var i = $0, buff = [Coordinate]()
-
+            
             // Vertical
             for q in i...(i+4) {
                 let co = Coordinate(col: col + q, row: row)
@@ -222,7 +229,7 @@ class Board: ZeroPlusDelegate {
             }
             winningCos.append(contentsOf: buff)
             buff.removeAll()
-
+            
             // Horizontal
             for q in i...(i+4) {
                 let co = Coordinate(col: col, row: row + q)
@@ -234,7 +241,7 @@ class Board: ZeroPlusDelegate {
             }
             winningCos.append(contentsOf: buff)
             buff.removeAll()
-
+            
             // Diagnol slope = 1
             for q in i...(i+4) {
                 let co = Coordinate(col: col + q, row: row + q)
@@ -246,7 +253,7 @@ class Board: ZeroPlusDelegate {
             }
             winningCos.append(contentsOf: buff)
             buff.removeAll()
-
+            
             //diagnol slope = -1
             for q in i...(i+4) {
                 let co = Coordinate(col: col + q, row: row - q)
@@ -261,7 +268,7 @@ class Board: ZeroPlusDelegate {
         }
         return winningCos
     }
-
+    
     /**
      This would only take effect if it is ZeroPlus's turn.
      */
@@ -278,7 +285,7 @@ class Board: ZeroPlusDelegate {
             triggerZeroBrainstorm()
         }
     }
-
+    
     func triggerZero2BrainStorm() {
         calcStartTime = Date().timeIntervalSince1970
         if gameHasEnded {return}
@@ -288,7 +295,7 @@ class Board: ZeroPlusDelegate {
         }
         zeroActivityQueue.async(execute: zero2WorkItem!)
     }
-
+    
     /**
      Use this to allow ZeroPlus to make a move
      */
@@ -315,9 +322,9 @@ class Board: ZeroPlusDelegate {
 /// Serialization
 extension Board {
     func serialize() -> String {
-        return "(dimension)|" + history.serialize()
+        return "\(dimension)|" + history.serialize()
     }
-
+    
     func load(_ game: String) {
         let segments = game.split(separator: "|")
         dimension = Int(segments[0])!
@@ -334,18 +341,15 @@ extension Board {
 extension Board: CustomStringConvertible {
     var description: String {
         let raw = Zobrist(matrix: pieces).description
-        let colMarks = (1...dimension).reduce("") {"($0)	($1)"}
-        let processed = raw.replacingOccurrences(of: " ", with: "	")
-                .split(separator: "
-        ")
-                .enumerated()
-                .map {"($0 + 1)	($1)"}
-                .reduce(colMarks) {"($0)
-
-                    ($1)"}
-                    return processed
-                }
+        let colMarks = (1...dimension).reduce("") {"\($0)\t\($1)"}
+        let processed = raw.replacingOccurrences(of: " ", with: "\t")
+            .split(separator: "\n")
+            .enumerated()
+            .map {"\($0 + 1)\t\($1)"}
+            .reduce(colMarks) {"\($0)\n\n\($1)"}
+        return processed
     }
+}
 
 protocol BoardDelegate: AnyObject {
     func boardDidUpdate(pieces: [[Piece]])

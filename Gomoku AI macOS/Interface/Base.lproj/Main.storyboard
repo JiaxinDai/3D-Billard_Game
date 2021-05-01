@@ -465,7 +465,7 @@
         <scene sceneID="cx1-Vl-XNU">
             <objects>
                 <windowController storyboardIdentifier="zero-console" id="Zhv-4G-Csz" customClass="ConsoleWindowController" customModule="Gomoku_AI" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="Gomoku Console" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="vUR-Po-LZp">
+                    <window key="window" title="GomokuAI Console" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="vUR-Po-LZp">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="245" y="301" width="480" height="270"/>
@@ -482,10 +482,10 @@
             </objects>
             <point key="canvasLocation" x="652" y="250"/>
         </scene>
-        <!--Gomoku Console-->
+        <!--GomokuAI Console-->
         <scene sceneID="uYr-ec-QOK">
             <objects>
-                <viewController title="Gomoku Console" id="Jm9-cs-958" customClass="ConsoleViewController" customModule="Gomoku_AI" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="GomokuAI Console" id="Jm9-cs-958" customClass="ConsoleViewController" customModule="Gomoku_AI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="bTW-dj-72r">
                         <rect key="frame" x="0.0" y="0.0" width="899" height="594"/>
                         <autoresizingMask key="autoresizingMask"/>

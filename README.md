@@ -1,8 +1,26 @@
-# Gomoku AI
-My second attemp at building an unbeatable gomoku AI!
-
-## Story of Creation
-GomokuAI is an OSX application built with Swift 4 that is optimized all the way to the end. Having read countless papers and accumulated experience with various optimization techniques including multi-threading and hashing, I flexed every nerve in my brain and fingers to equip GomokuAI with an optimal algorithm. Based on a depth and time limited minimax algorithm that performs threat space search, GomokuAI linearizes the 2D matrix of the board and extrapolates the best defensives and offensive moves that feed into minimax by using an original algorithm that evaluates and hashes linear patterns to achieve significant speedup. First, a 2D map of active coordinates is updated with each increment of depth and changes made to the history stack, and each active coordinate is evaluated for threat potential and sorted into an array to serve as candidates. Then, a slightly modified Zorbist transpositional hashtable coupled with heuristics evaluation is used at every leaf node to achieve further speedup. All modern computers are equipped with multiple cores, and GomokuAI uses iterative deepening to bring out its full potential by calculating each depth concurrently on a separate thread with each thread having synchronized access to the shared hash maps. It is, indeed, considered the pinnacle of my creation.
+#  ![alt text](https://github.com/JiaxinDai/GomokuAI/blob/master/Gomoku%20AI%20macOS/Resources/Assets.xcassets/AppIcon.appiconset/icon_128x128.png "GomokuAI App Icon") Gomoku AI
+An AI program for Gomoku, also known as Five in a Row, a popular board game that is played on the same board as Go.
 
 ## Features Snapshot
-![alt text](https://github.com/JiaxinDai/Gomoku-AI/blob/master/Gomoku%20AI/Resources/Screenshots/all-features.png "Features Snapshot")
+![alt text](https://github.com/JiaxinDai/GomokuAI/blob/master/Gomoku%20AI%20macOS/Resources/Screenshots/all-features.png "Features Snapshot")
+
+## Algorithms & Data Structures Overview
+- Heuristic Evaluation
+- Threat Space Search
+    - Minimax w/ Alpha-beta Pruning 
+        - ZeroMax - an attempt to overcome horizon effect
+        - NegaScout (Principal Variation Search)
+    - Monte Carlo Tree Search
+
+## Self-Play
+In order to figure out the optimal weight assignment for each threat type, Gomoku AI plays against itself. This is currently a work in progress, but starting with zero knowlege about the game except the rules, the algorithm is able to converge toward a reasonable weight assignment given enough time. 
+
+To spawn a customized looped skirmish, use the **GomokuAI Console**. The short-cut for opening the console is `⌃⇧C` (Control-Shift-C). Make sure that `Looped` is checked. You can optionally save the skirmishes to a designated location. To generate stats from saved skirmishes, click `Generate Stats`. 
+![alt text](https://github.com/JiaxinDai/GomokuAI/blob/master/Gomoku%20AI%20macOS/Resources/Screenshots/console.png "Console Screenshot")
+
+The following .gif shows a looped play of two heuristic AIs happening in real time:
+![alt text](https://github.com/JiaxinDai/GomokuAI/blob/master/Gomoku%20AI%20macOS/Resources/Screenshots/self-play.gif)
+
+Another cool feature is the visualization of the AI. The visualization offers a peek into the inner-workings of the algorithm (i.e. what it is doing, either updating the active map or performing simulations) in real time. To enable visualization, make sure the check box is checked in the console. (Alternatively, use the short cut `⌃⌥A` (Control-Option-A)).
+
+
